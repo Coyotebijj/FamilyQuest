@@ -1,0 +1,1924 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#39ff14">
+  <meta charset="UTF-8" />
+  <title>Vie de famille & foyer</title>
+  <style>
+#app.hidden { display: none; }
+/* ---------- PAGE D'ACCUEIL FAMILIQUEST ---------- */
+/* Assistant de quête */
+.wizard {
+  position: fixed;
+  inset: 0;
+  background: #0b0b10;
+  color: #e0e0e0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 40px;
+  z-index: 9999;
+}
+
+.hidden { display: none; }
+
+.wizard-screen {
+  text-align: center;
+  max-width: 600px;
+  animation: fadeIn 0.6s ease;
+}
+
+.wizard-title {
+  font-size: 2.4rem;
+  margin-bottom: 20px;
+  color: #39ff14;
+  text-shadow: 0 0 10px #39ff14;
+}
+
+.wizard-text {
+  font-size: 1.2rem;
+  margin-bottom: 30px;
+  color: #00e0ff;
+  text-shadow: 0 0 8px #00e0ff;
+}
+
+.wizard-btn {
+  background: #39ff14;
+  border: none;
+  padding: 12px 25px;
+  font-size: 1.2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  margin: 10px;
+  color: #0b0b10;
+  font-weight: bold;
+  box-shadow: 0 0 15px #39ff14;
+  transition: 0.2s;
+}
+
+.wizard-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 25px #39ff14;
+}
+
+.wizard-input {
+  width: 80%;
+  padding: 12px;
+  font-size: 1.1rem;
+  border-radius: 8px;
+  border: 2px solid #00e0ff;
+  background: #15151f;
+  color: #e0e0e0;
+  margin-bottom: 20px;
+}
+
+.member-card {
+  background: #15151f;
+  padding: 15px;
+  margin: 10px 0;
+  border-radius: 10px;
+  box-shadow: 0 0 10px #00e0ff;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+#fq-welcome {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at top, #1b1b2b 0, #050509 55%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+}
+
+.fq-welcome-content {
+  text-align: center;
+  animation: fqFadeIn 1s ease forwards;
+}
+
+.fq-welcome-title {
+  font-size: 3rem;
+  margin: 20px 0 10px;
+  background: linear-gradient(135deg, #4caf50, #00e0ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.fq-welcome-slogan {
+  font-size: 1.3rem;
+  color: var(--muted);
+  margin-bottom: 30px;
+}
+
+#fq-enter-btn {
+  background: var(--accent);
+  border: none;
+  padding: 14px 32px;
+  font-size: 1.2rem;
+  border-radius: 999px;
+  cursor: pointer;
+  color: #050509;
+  box-shadow: 0 0 20px rgba(0,255,150,0.5);
+  transition: 0.2s;
+}
+
+#fq-enter-btn:hover {
+  transform: scale(1.05);
+}
+
+@keyframes fqFadeIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+    /* ---------- STYLE GLOBAL ---------- */
+    :root {
+      --bg: #0b0b10;
+      --bg-card: #15151f;
+      --bg-panel: #101019;
+      --accent: #39ff14;
+      --accent2: #00e0ff;
+      --danger: #ff4b4b;
+      --text: #e0e0e0;
+      --muted: #888;
+      --border: #262636;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #1b1b2b 0, #050509 55%);
+      color: var(--text);
+    }
+
+    a {
+      color: var(--accent2);
+      text-decoration: none;
+    }
+
+    /* ---------- HEADER ---------- */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      background: rgba(5, 5, 10, 0.9);
+      backdrop-filter: blur(10px);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+/* ---------- LOGO FAMILIQUEST ---------- */
+    .fq-logo {
+      width: 120px;
+      height: 120px;
+      background: linear-gradient(135deg, #4caf50, #00c2ff);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      font-weight: bold;
+      color: white;
+      box-shadow: 0 0 25px rgba(0,255,150,0.6);
+      margin: 20px auto;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+.fq-brand {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  justify-content: center;
+  margin: 20px 0;
+}
+.fq-clan {
+  font-size: 1rem;
+  color: var(--accent);
+  text-shadow: 0 0 8px rgba(57,255,20,0.4);
+}
+
+.fq-name {
+  font-size: 2.2rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  background: linear-gradient(135deg, #4caf50, #00e0ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 12px rgba(0,255,150,0.4);
+}
+    .title-block {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .title-block h1 {
+      margin: 0;
+      font-size: 1.4rem;
+      letter-spacing: 0.05em;
+    }
+
+    .title-block span {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 999px;
+      padding: 0.45rem 0.9rem;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #000;
+      box-shadow: 0 0 12px rgba(57, 255, 20, 0.4);
+    }
+
+    .btn-secondary {
+      background: #1f1f2a;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-danger {
+      background: var(--danger);
+      color: #000;
+      box-shadow: 0 0 10px rgba(255, 75, 75, 0.4);
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 0 16px rgba(0, 0, 0, 0.4);
+    }
+
+    .icon {
+      font-size: 1rem;
+    }
+
+    /* ---------- LAYOUT PRINCIPAL ---------- */
+    main {
+      padding: 1.5rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 2fr 2fr 1.5fr;
+      gap: 1rem;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border-radius: 14px;
+      padding: 1rem;
+      box-shadow: 0 0 18px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.02);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.6rem;
+    }
+
+    .card-header h2 {
+      margin: 0;
+      font-size: 1rem;
+      letter-spacing: 0.04em;
+    }
+
+    .card-header span {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    /* ---------- TABLES ---------- */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+    }
+
+    th, td {
+      padding: 0.35rem 0.25rem;
+      border-bottom: 1px solid #222233;
+      text-align: left;
+    }
+
+    th {
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.15rem 0.5rem;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      background: rgba(0, 224, 255, 0.12);
+      color: var(--accent2);
+    }
+
+    .badge-level {
+      background: rgba(57, 255, 20, 0.12);
+      color: var(--accent);
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.15rem 0.5rem;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      background: #1f1f2a;
+      color: var(--muted);
+    }
+
+    .status-done {
+      color: var(--accent);
+    }
+
+    .status-pending {
+      color: var(--muted);
+    }
+
+    /* ---------- AVATARS ---------- */
+    .avatar {
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #000;
+      margin-right: 0.35rem;
+    }
+
+    .avatar-parent {
+      background: linear-gradient(135deg, #ffcc00, #ff8800);
+    }
+
+    .avatar-child {
+      background: linear-gradient(135deg, #39ff14, #00e0ff);
+    }
+
+    /* ---------- CALENDRIER ---------- */
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 0.25rem;
+      font-size: 0.7rem;
+    }
+
+    .calendar-day {
+      background: #1a1a24;
+      border-radius: 8px;
+      padding: 0.35rem;
+      min-height: 40px;
+      position: relative;
+      border: 1px solid #222233;
+    }
+
+    .calendar-day span {
+      font-size: 0.65rem;
+      color: var(--muted);
+    }
+
+    .calendar-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      position: absolute;
+      bottom: 4px;
+      right: 4px;
+    }
+
+    .calendar-dot-task {
+      background: var(--accent);
+    }
+
+    .calendar-dot-reward {
+      background: var(--accent2);
+    }
+
+    .calendar-dot-penalty {
+      background: var(--danger);
+    }
+
+    /* ---------- STATS ---------- */
+    .stats-row {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      margin-top: 0.5rem;
+    }
+
+    .stat-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.75rem;
+    }
+
+    .stat-label {
+      width: 80px;
+      color: var(--muted);
+    }
+
+    .stat-bar-inner {
+      flex: 1;
+      height: 8px;
+      border-radius: 999px;
+      background: #1a1a24;
+      overflow: hidden;
+    }
+
+    .stat-bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transition: width 0.3s ease;
+    }
+
+    .stat-value {
+      width: 40px;
+      text-align: right;
+      font-size: 0.7rem;
+      color: var(--muted);
+    }
+
+    /* ---------- PANNEAU PARAMÈTRES PLEIN ÉCRAN ---------- */
+    .settings-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(5, 5, 10, 0.92);
+      backdrop-filter: blur(14px);
+      display: none;
+      z-index: 50;
+    }
+
+    .settings-overlay.active {
+      display: flex;
+    }
+
+    .settings-panel {
+      display: flex;
+      width: 100%;
+      height: 100%;
+    }
+
+    .settings-sidebar {
+      width: 250px;
+      background: #090912;
+      border-right: 1px solid var(--border);
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .settings-sidebar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+    }
+
+    .settings-sidebar-header h2 {
+      margin: 0;
+      font-size: 1rem;
+    }
+
+    .settings-sidebar-header span {
+      font-size: 0.7rem;
+      color: var(--muted);
+    }
+
+    .settings-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+      margin-top: 0.5rem;
+    }
+
+    .settings-nav-btn {
+      border: none;
+      border-radius: 999px;
+      padding: 0.4rem 0.6rem;
+      font-size: 0.8rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: transparent;
+      color: var(--muted);
+      transition: background 0.15s ease, color 0.15s ease, transform 0.1s ease;
+    }
+
+    .settings-nav-btn .icon {
+      font-size: 0.9rem;
+    }
+
+    .settings-nav-btn.active {
+      background: linear-gradient(135deg, rgba(57, 255, 20, 0.18), rgba(0, 224, 255, 0.18));
+      color: var(--text);
+      transform: translateX(2px);
+    }
+
+    .settings-nav-btn:hover {
+      background: #151522;
+      color: var(--text);
+    }
+
+    .settings-sidebar-footer {
+      margin-top: auto;
+      font-size: 0.7rem;
+      color: var(--muted);
+    }
+
+    .settings-content {
+      flex: 1;
+      padding: 1.2rem 1.5rem;
+      overflow-y: auto;
+    }
+
+    .settings-section {
+      display: none;
+    }
+
+    .settings-section.active {
+      display: block;
+    }
+
+    .settings-section h3 {
+      margin-top: 0;
+      font-size: 1rem;
+      letter-spacing: 0.04em;
+    }
+
+    .settings-section p {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .settings-list {
+      margin-top: 0.6rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .settings-item {
+      background: #15151f;
+      border-radius: 10px;
+      padding: 0.5rem 0.6rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border: 1px solid #222233;
+      font-size: 0.8rem;
+    }
+
+    .settings-item-main {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .settings-item-meta {
+      font-size: 0.7rem;
+      color: var(--muted);
+    }
+
+    .settings-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .settings-inline-inputs {
+      display: flex;
+      gap: 0.4rem;
+      margin-top: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select {
+      background: #15151f;
+      border-radius: 999px;
+      border: 1px solid #262636;
+      padding: 0.35rem 0.6rem;
+      font-size: 0.8rem;
+      color: var(--text);
+      outline: none;
+      min-width: 120px;
+    }
+
+    input[type="text"]:focus,
+    input[type="number"]:focus,
+    select:focus {
+      border-color: var(--accent2);
+      box-shadow: 0 0 0 1px rgba(0, 224, 255, 0.4);
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 80px;
+      background: #15151f;
+      border-radius: 10px;
+      border: 1px solid #262636;
+      padding: 0.5rem 0.6rem;
+      font-size: 0.8rem;
+      color: var(--text);
+      resize: vertical;
+    }
+
+    /* ---------- RESPONSIVE ---------- */
+    @media (max-width: 900px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+      .settings-sidebar {
+        width: 210px;
+      }
+    }
+
+    @media (max-width: 700px) {
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+      }
+      .settings-panel {
+        flex-direction: column;
+      }
+      .settings-sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        flex-direction: row;
+        flex-wrap: wrap;
+      }
+      .settings-nav {
+        flex-direction: row;
+        flex-wrap: wrap;
+      }
+    }
+  </style>
+<style>
+.hidden {
+  display: none;
+}
+.reward-animation {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.8);
+  background: #4caf50;
+  color: white;
+  padding: 30px 45px;
+  border-radius: 15px;
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  box-shadow: 0 0 30px rgba(0,255,100,0.7);
+  opacity: 0;
+  animation: rewardPop 1.4s forwards;
+  z-index: 99999;
+}
+
+@keyframes rewardPop {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.6); }
+  20% { opacity: 1; transform: translate(-50%, -50%) scale(1.15); }
+  60% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+}
+.btn-history {
+  padding: 0.2rem 0.4rem;
+  font-size: 0.8rem;
+  background: var(--secondary);
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-left: auto;
+}
+</style>
+</head>
+<body>
+<!-- Assistant de première installation -->
+<div id="setup-wizard" class="wizard hidden">
+
+  <!-- Écran 1 — L’Appel de la Quête -->
+  <section class="wizard-screen" id="screen-1">
+    <h1 class="wizard-title">L’Appel de la Quête</h1>
+    <p class="wizard-text">
+      Voyageur du foyer… une nouvelle aventure commence.<br>
+      Chaque famille possède sa propre légende.<br>
+      Aujourd’hui, vous allez écrire la vôtre.
+    </p>
+    <button class="wizard-btn" onclick="nextScreen(2)">Répondre à l’appel</button>
+  </section>
+
+  <!-- Écran 2 — Le Nom du Clan -->
+  <section class="wizard-screen hidden" id="screen-2">
+    <h1 class="wizard-title">Le Nom du Clan</h1>
+    <p class="wizard-text">Quel nom portera votre foyer dans cette aventure ?</p>
+    <input id="clan-name" class="wizard-input" placeholder="Nom du clan">
+    <button class="wizard-btn" onclick="nextScreen(3)">Continuer</button>
+  </section>
+
+  <!-- Écran 3 — Les Héros du Foyer -->
+  <section class="wizard-screen hidden" id="screen-3">
+    <h1 class="wizard-title">Les Héros du Foyer</h1>
+    <p class="wizard-text">Qui sont les aventuriers de votre clan ?</p>
+
+    <div id="members-list"></div>
+
+    <button class="wizard-btn" onclick="addMember()">Ajouter un Héros</button>
+    <button class="wizard-btn" onclick="nextScreen(4)">Continuer</button>
+  </section>
+
+  <!-- Écran 4 — Le Serment du Clan -->
+  <section class="wizard-screen hidden" id="screen-4">
+    <h1 class="wizard-title">Le Serment du Clan</h1>
+    <p class="wizard-text">
+      Le clan est formé.<br>
+      Ensemble, vous accomplirez des quêtes, gagnerez des points,<br>
+      et transformerez chaque jour en aventure.
+    </p>
+    <button class="wizard-btn" onclick="finishSetup()">Entrer dans la Quête</button>
+  </section>
+
+</div>
+  <!-- Ton contenu FamiliQuest -->
+  <div id="app">
+  </div>
+
+<div id="fq-welcome">
+  <div class="fq-welcome-content">
+    <div class="fq-logo">FQ</div>
+    <h1 class="fq-welcome-title">FamiliQuest</h1>
+    <p class="fq-welcome-slogan">Chaque jour est une quête en famille.</p>
+    <button id="fq-enter-btn">Entrer dans la quête</button>
+  </div>
+</div>
+
+  <!-- ---------- HEADER ---------- -->
+  <header>
+    <div class="title-block">
+      <h1>Vie de famille & foyer</h1>
+      <span>Système gamifié pour le foyer</span>
+    </div>
+<div class="fq-brand">
+  <div class="fq-logo">FQ</div>
+  <span class="fq-name">FamiliQuest</span>
+<span id="clanDisplay" class="fq-clan"></span>
+</div>
+    <div class="header-actions">
+      <button class="btn btn-secondary" id="openSettingsBtn">
+        <span class="icon">⚙️</span>
+        Paramètres
+      </button>
+      <button class="btn btn-primary" id="saveAllBtn">
+        💾 Sauvegarder tout
+      </button>
+    </div>
+  </header>
+  
+  <!-- ---------- CONTENU PRINCIPAL ---------- -->
+  <main>
+    <div class="grid">
+      <!-- Famille & points -->
+      <section class="card">
+        <div class="card-header">
+          <h2>Famille & points</h2>
+          <span>Niveaux, badges & rôles</span>
+<button id="toggleHistoryBtn" class="btn-history">📜</button>
+        </div>
+        <table id="familyTable">
+          <thead>
+            <tr>
+              <th>Membre</th>
+              <th>Points</th>
+              <th>Niveau</th>
+              <th>Badges</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Rempli par JS -->
+          </tbody>
+        </table>
+      </section>
+
+      <!-- Gestion des tâches -->
+      <section class="card">
+        <div class="card-header">
+          <h2>Gestion des tâches</h2>
+          <span>Tâches quotidiennes & hebdomadaires</span>
+        </div>
+        <div class="settings-inline-inputs">
+          <input type="text" id="taskNameInput" placeholder="Nom de la tâche" />
+          <select id="taskPersonInput"></select>
+          <input type="number" id="taskPointsInput" placeholder="Points" min="0.5" step="0.5" />
+          <button class="btn btn-primary" id="addTaskBtn">+ Ajouter</button>
+        </div>
+        <table id="tasksTable">
+          <thead>
+            <tr>
+              <th>Tâche</th>
+              <th>Personne</th>
+              <th>Points</th>
+              <th>Statut</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Rempli par JS -->
+          </tbody>
+        </table>
+      </section>
+<section class="card">
+  <div class="card-header">
+    <h2>Historique des tâches</h2>
+    <span>Tâches terminées récemment</span>
+  </div>
+  <table id="historyTable">
+    <thead>
+      <tr>
+        <th>Tâche</th>
+        <th>Personne</th>
+        <th>Points</th>
+        <th>Date</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</section>
+
+      <!-- Récompenses & sanctions -->
+      <section class="card">
+        <div class="card-header">
+          <h2>Récompenses & sanctions</h2>
+          <span>Motivation & cadre</span>
+        </div>
+
+        <!-- Récompenses -->
+        <div style="margin-bottom:0.6rem;">
+          <strong>Récompenses</strong>
+          <div class="settings-inline-inputs">
+            <input type="number" id="rewardPointsInput" placeholder="Points requis" min="0.5" step="0.5" />
+            <input type="text" id="rewardDescInput" placeholder="Description" />
+            <button class="btn btn-primary" id="addRewardBtn">+ Ajouter</button>
+          </div>
+          <table id="rewardsTable">
+            <thead>
+              <tr>
+                <th>Points</th>
+                <th>Description</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <!-- Sanctions -->
+        <div>
+          <strong>Sanctions</strong>
+          <div class="settings-inline-inputs">
+            <select id="penaltyPersonInput"></select>
+           <input type="number" id="penaltyPointsInput" placeholder="Points à retirer" min="0.5" step="0.5" />
+            <input type="text" id="penaltyReasonInput" placeholder="Raison" />
+            <button class="btn btn-danger" id="addPenaltyBtn">Retirer</button>
+          </div>
+          <table id="penaltiesTable">
+            <thead>
+              <tr>
+                <th>Personne</th>
+                <th>Points retirés</th>
+                <th>Raison</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Objectifs de la semaine -->
+      <section class="card">
+        <div class="card-header">
+          <h2>Objectifs de la semaine</h2>
+          <span>Focus & progression</span>
+        </div>
+        <div class="settings-inline-inputs">
+          <select id="goalPersonInput"></select>
+          <input type="text" id="goalTextInput" placeholder="Objectif (ex: 3 tâches terminées)" />
+          <button class="btn btn-primary" id="addGoalBtn">+ Ajouter</button>
+        </div>
+        <table id="goalsTable">
+          <thead>
+            <tr>
+              <th>Personne</th>
+              <th>Objectif</th>
+              <th>Statut</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </section>
+
+      <!-- Calendrier mensuel -->
+      <section class="card">
+        <div class="card-header">
+          <h2>Calendrier mensuel</h2>
+          <span>Octobre 2026</span>
+        </div>
+        <div class="calendar-grid" id="calendarGrid">
+          <!-- Rempli par JS -->
+        </div>
+      </section>
+
+      <!-- Statistiques mensuelles -->
+      <section class="card">
+        <div class="card-header">
+          <h2>Statistiques mensuelles</h2>
+          <span>Tâches, points, sanctions, récompenses</span>
+        </div>
+        <div class="stats-row" id="statsRow">
+          <!-- Rempli par JS -->
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- ---------- PANNEAU PARAMÈTRES PLEIN ÉCRAN ---------- -->
+  <div class="settings-overlay" id="settingsOverlay">
+    <div class="settings-panel">
+      <!-- Sidebar -->
+      <aside class="settings-sidebar">
+        <div class="settings-sidebar-header">
+          <h2>Paramètres</h2>
+          <span>Configuration avancée</span>
+        </div>
+        <div class="settings-nav">
+          <button class="settings-nav-btn active" data-section="membersSection">
+            <span class="icon">👥</span>
+            <span>Membres</span>
+          </button>
+          <button class="settings-nav-btn" data-section="autoTasksSection">
+            <span class="icon">♻️</span>
+            <span>Tâches automatiques</span>
+          </button>
+          <button class="settings-nav-btn" data-section="levelsSection">
+            <span class="icon">⭐</span>
+            <span>Niveaux & badges</span>
+          </button>
+          <button class="settings-nav-btn" data-section="resetSection">
+            <span class="icon">🧹</span>
+            <span>Réinitialisation</span>
+          </button>
+          <button class="settings-nav-btn" data-section="importExportSection">
+            <span class="icon">📦</span>
+            <span>Import / Export</span>
+          </button>
+        </div>
+        <div class="settings-sidebar-footer">
+          <button class="btn btn-secondary" id="closeSettingsBtn" style="width:100%;margin-bottom:0.4rem;">
+            ⬅️ Retour au tableau
+          </button>
+          <span>Vie de famille & foyer · Panel avancé</span>
+        </div>
+      </aside>
+
+      <!-- Content -->
+      <section class="settings-content">
+        <!-- Membres -->
+        <div class="settings-section active" id="membersSection">
+          <h3>Membres du foyer</h3>
+          <p>Ajoute, modifie ou supprime les membres. Les rôles sont affichés (parent / enfant) et influencent l’affichage.</p>
+          <div class="settings-inline-inputs">
+            <input type="text" id="settingsMemberNameInput" placeholder="Nom du membre" />
+            <select id="settingsMemberRoleInput">
+              <option value="parent">Parent</option>
+              <option value="child">Enfant</option>
+            </select>
+            <button class="btn btn-primary" id="settingsAddMemberBtn">+ Ajouter un membre</button>
+          </div>
+          <div class="settings-list" id="settingsMembersList">
+            <!-- Rempli par JS -->
+          </div>
+        </div>
+
+        <!-- Tâches automatiques -->
+        <div class="settings-section" id="autoTasksSection">
+          <h3>Tâches automatiques</h3>
+          <p>Définis des tâches récurrentes. Elles peuvent être générées manuellement via le bouton dédié.</p>
+          <div class="settings-inline-inputs">
+            <select id="settingsAutoTaskPersonInput"></select>
+            <input type="text" id="settingsAutoTaskNameInput" placeholder="Nom de la tâche" />
+            <input type="number" id="settingsAutoTaskPointsInput" placeholder="Points" min="1" />
+            <button class="btn btn-primary" id="settingsAddAutoTaskBtn">+ Ajouter une tâche auto</button>
+          </div>
+          <div class="settings-list" id="settingsAutoTasksList">
+            <!-- Rempli par JS -->
+          </div>
+          <div style="margin-top:0.6rem;">
+            <button class="btn btn-secondary" id="generateAutoTasksBtn">
+              ♻️ Générer les tâches automatiques
+            </button>
+          </div>
+        </div>
+
+        <!-- Niveaux & badges -->
+        <div class="settings-section" id="levelsSection">
+          <h3>Niveaux, XP & badges</h3>
+          <p>Le système est gamifié : les points donnent de l’XP, des niveaux, des badges et des titres.</p>
+          <p style="font-size:0.75rem;color:var(--muted);">
+            (Pour simplifier, les règles sont codées en dur dans le JS : ex. 0–9 pts = Niveau 1, 10–24 = Niveau 2, etc.)
+          </p>
+          <div class="settings-list" id="settingsLevelsInfo">
+            <!-- Rempli par JS (description des paliers) -->
+          </div>
+        </div>
+
+        <!-- Réinitialisation -->
+        <div class="settings-section" id="resetSection">
+          <h3>Réinitialisation</h3>
+          <p>Réinitialise les données du tableau. Les membres sont conservés, mais les tâches, récompenses, sanctions, objectifs, stats et calendrier sont remis à zéro.</p>
+          <div class="settings-inline-inputs">
+            <button class="btn btn-danger" id="resetDataBtn">
+              🧹 Réinitialiser tout (sauf membres)
+            </button>
+          </div>
+        </div>
+
+        <!-- Import / Export -->
+        <div class="settings-section" id="importExportSection">
+          <h3>Import / Export des données</h3>
+          <p>Tu peux exporter toutes les données au format JSON, ou les réimporter pour restaurer un état.</p>
+          <div class="settings-inline-inputs">
+            <button class="btn btn-primary" id="exportJsonBtn">
+              📤 Exporter les données (JSON)
+            </button>
+          </div>
+          <div style="margin-top:0.6rem;">
+            <textarea id="importJsonTextarea" placeholder="Colle ici un JSON pour importer les données..."></textarea>
+            <button class="btn btn-secondary" id="importJsonBtn" style="margin-top:0.4rem;">
+              📥 Importer les données
+            </button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- ---------- LOGIQUE JS ---------- -->
+  <script>
+document.getElementById("app").classList.add("hidden");
+document.getElementById("toggleHistoryBtn").addEventListener("click", () => {
+  const historySection = document.querySelector("#historyTable").closest("section");
+  historySection.classList.toggle("hidden");
+});
+    // ---------- Données & stockage ----------
+    const STORAGE_KEY = "familyBoardV2";
+
+    const defaultData = {
+      members: [],
+      points: {},
+      tasks: [],
+      rewards: [],
+      penalties: [],
+      goals: [],
+      autoTasks: [],
+      stats: {
+        tasksDone: {},
+        penalties: {},
+        rewardsBought: {}
+      },
+      calendar: {},
+      history: [],
+    };
+function showMainApp() {
+  document.getElementById("app").classList.remove("hidden");
+}
+    function loadData() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return structuredClone(defaultData);
+      try {
+        return JSON.parse(raw);
+      } catch {
+        return structuredClone(defaultData);
+      }
+    }
+
+    function saveData(data) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+
+    let data = loadData();
+if (!data.history) data.history = [];
+
+    // ---------- Utilitaires ----------
+    function getLevel(points) {
+      if (points >= 60) return { level: 5, title: "Héros du foyer" };
+      if (points >= 40) return { level: 4, title: "Pilier du foyer" };
+      if (points >= 25) return { level: 3, title: "Super aide" };
+      if (points >= 10) return { level: 2, title: "Apprenti du foyer" };
+      return { level: 1, title: "Débutant" };
+    }
+
+    function updateStatsForTask(person, done) {
+      if (!data.stats.tasksDone[person]) data.stats.tasksDone[person] = 0;
+      if (done) data.stats.tasksDone[person] += 1;
+      else data.stats.tasksDone[person] = Math.max(0, data.stats.tasksDone[person] - 1);
+    }
+
+    function updateStatsForPenalty(person) {
+      if (!data.stats.penalties[person]) data.stats.penalties[person] = 0;
+      data.stats.penalties[person] += 1;
+    }
+
+    function updateStatsForReward(person) {
+      if (!data.stats.rewardsBought[person]) data.stats.rewardsBought[person] = 0;
+      data.stats.rewardsBought[person] += 1;
+    }
+
+    // ---------- Rendu Famille ----------
+    function renderFamily() {
+      const tbody = document.querySelector("#familyTable tbody");
+      tbody.innerHTML = "";
+      data.members.forEach(m => {
+        const pts = data.points[m.name] || 0;
+        const lvl = getLevel(pts);
+        const badges = [];
+        if (pts >= 10) badges.push("Assidu");
+        if (pts >= 25) badges.push("Fiable");
+        if (pts >= 40) badges.push("Exemplaire");
+        if (pts >= 60) badges.push("Héros");
+
+        const avatarClass = m.role === "parent" ? "avatar-parent" : "avatar-child";
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>
+            <span class="avatar ${avatarClass}">${m.name.charAt(0)}</span>
+            ${m.name}
+            <span class="pill">${m.role === "parent" ? "Parent" : "Enfant"}</span>
+          </td>
+          <td>${pts}</td>
+          <td><span class="badge badge-level">Niveau ${lvl.level}</span></td>
+          <td>${badges.map(b => `<span class="badge">${b}</span>`).join(" ")}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+function renderHistory() {
+  const tbody = document.querySelector("#historyTable tbody");
+  tbody.innerHTML = "";
+
+  data.history.forEach(h => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${h.name}</td>
+      <td>${h.person}</td>
+      <td>${h.points}</td>
+      <td>${h.date}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+    // ---------- Rendu Tâches ----------
+    function renderTasks() {
+      const tbody = document.querySelector("#tasksTable tbody");
+      tbody.innerHTML = "";
+      data.tasks.forEach((t, index) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${t.name}</td>
+          <td>${t.person}</td>
+          <td>${t.points}</td>
+          <td class="${t.done ? "status-done" : "status-pending"}">
+            ${t.done ? "✔ Terminée" : "En cours"}
+          </td>
+          <td>
+            <button class="btn btn-secondary" onclick="toggleTaskDone(${index})">
+              ${t.done ? "Annuler" : "Valider"}
+            </button>
+            <button class="btn btn-secondary" onclick="duplicateTask(${index})">
+              Dupliquer
+            </button>
+            <button class="btn btn-danger" onclick="deleteTask(${index})">
+              Supprimer
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function addTask() {
+  const name = document.getElementById("taskNameInput").value.trim();
+  const person = document.getElementById("taskPersonInput").value;
+  const points = parseFloat(document.getElementById("taskPointsInput").value);
+
+  if (points !== 0.5 && !Number.isInteger(points)) {
+    alert("Tu peux seulement mettre 0,5 ou un nombre entier.");
+    return;
+  }
+
+      if (!name || !person || !points) return;
+
+      data.tasks.push({ name, person, points, done: false });
+      saveData(data);
+      renderTasks();
+      renderStats();
+      document.getElementById("taskNameInput").value = "";
+      document.getElementById("taskPointsInput").value = "";
+    }
+
+function toggleTaskDone(index) {
+  const t = data.tasks[index];
+
+  // Ajouter les points
+  data.points[t.person] = (data.points[t.person] || 0) + t.points;
+
+  // Ajouter dans l'historique
+  data.history.push({
+    name: t.name,
+    person: t.person,
+    points: t.points,
+    date: new Date().toLocaleString()
+  });
+
+  // Stats
+  updateStatsForTask(t.person, true);
+
+  // Supprimer de la liste des tâches
+  data.tasks.splice(index, 1);
+
+  // Sauvegarde
+  saveData(data);
+
+  // Rendu
+  renderFamily();
+  renderTasks();
+  renderHistory();
+  renderStats();
+}
+
+    
+    function deleteTask(index) {
+      const t = data.tasks[index];
+      if (t.done) {
+        data.points[t.person] = Math.max(0, (data.points[t.person] || 0) - t.points);
+        updateStatsForTask(t.person, false);
+      }
+      data.tasks.splice(index, 1);
+      saveData(data);
+      renderFamily();
+      renderTasks();
+      renderStats();
+    }
+
+    function duplicateTask(index) {
+      const t = data.tasks[index];
+      data.tasks.push({ ...t, done: false });
+      saveData(data);
+      renderTasks();
+    }
+
+    // ---------- Récompenses ----------
+    function renderRewards() {
+      const tbody = document.querySelector("#rewardsTable tbody");
+      tbody.innerHTML = "";
+      data.rewards.forEach((r, index) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${r.points}</td>
+          <td>${r.desc}</td>
+          <td>
+            <button class="btn btn-secondary" onclick="buyReward(${index})">Acheter</button>
+            <button class="btn btn-danger" onclick="deleteReward(${index})">Supprimer</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function addReward() {
+  const points = parseFloat(document.getElementById("rewardPointsInput").value);
+  const desc = document.getElementById("rewardDescInput").value.trim();
+
+  // Autoriser seulement 0,5 ou un entier
+  if (points !== 0.5 && !Number.isInteger(points)) {
+    alert("Tu peux seulement mettre 0,5 ou un nombre entier.");
+    return;
+  }
+
+  if (desc === "") return;
+
+  data.rewards.push({ points, desc });
+  saveData(data);
+  renderRewards();
+
+  document.getElementById("rewardPointsInput").value = "";
+  document.getElementById("rewardDescInput").value = "";
+}
+
+    function deleteReward(index) {
+      data.rewards.splice(index, 1);
+      saveData(data);
+      renderRewards();
+    }
+
+    function buyReward(index) {
+      const r = data.rewards[index];
+      const person = prompt("Qui achète cette récompense ?");
+      if (!person || !data.points[person]) return;
+      if (data.points[person] < r.points) {
+        alert(person + " n'a pas assez de points.");
+        return;
+      }
+      data.points[person] -= r.points;
+      updateStatsForReward(person);
+      saveData(data);
+      renderFamily();
+      renderStats();
+      showRewardAnimation(person + " a acheté : " + r.desc);
+    }
+
+    // ---------- Sanctions ----------
+    function renderPenalties() {
+      const tbody = document.querySelector("#penaltiesTable tbody");
+      tbody.innerHTML = "";
+      data.penalties.forEach(p => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${p.person}</td>
+          <td>${p.points}</td>
+          <td>${p.reason}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function addPenalty() {
+  const person = document.getElementById("penaltyPersonInput").value;
+  const points = parseFloat(document.getElementById("penaltyPointsInput").value);
+  const reason = document.getElementById("penaltyReasonInput").value.trim();
+
+  // Autoriser seulement 0,5 ou un entier
+  if (points !== 0.5 && !Number.isInteger(points)) {
+    alert("Tu peux seulement mettre 0,5 ou un nombre entier.");
+    return;
+  }
+
+  if (!person || reason === "") return;
+
+  data.penalties.push({ person, points, reason });
+  data.points[person] = Math.max(0, (data.points[person] || 0) - points);
+  updateStatsForPenalty(person);
+  saveData(data);
+  renderFamily();
+  renderPenalties();
+  renderStats();
+
+  document.getElementById("penaltyPointsInput").value = "";
+  document.getElementById("penaltyReasonInput").value = "";
+}
+
+    // ---------- Objectifs ----------
+    function renderGoals() {
+      const tbody = document.querySelector("#goalsTable tbody");
+      tbody.innerHTML = "";
+      data.goals.forEach((g, index) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${g.person}</td>
+          <td>${g.text}</td>
+          <td>${g.done ? "✔ Atteint" : "En cours"}</td>
+          <td>
+            <button class="btn btn-secondary" onclick="toggleGoalDone(${index})">
+              ${g.done ? "Annuler" : "Valider"}
+            </button>
+            <button class="btn btn-danger" onclick="deleteGoal(${index})">
+              Supprimer
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function addGoal() {
+      const person = document.getElementById("goalPersonInput").value;
+      const text = document.getElementById("goalTextInput").value.trim();
+      if (!person || !text) return;
+      data.goals.push({ person, text, done: false });
+      saveData(data);
+      renderGoals();
+      document.getElementById("goalTextInput").value = "";
+    }
+
+    function toggleGoalDone(index) {
+      const g = data.goals[index];
+      g.done = !g.done;
+      saveData(data);
+      renderGoals();
+    }
+
+    function deleteGoal(index) {
+      data.goals.splice(index, 1);
+      saveData(data);
+      renderGoals();
+    }
+
+    // ---------- Calendrier ----------
+    function renderCalendar() {
+      const grid = document.getElementById("calendarGrid");
+      grid.innerHTML = "";
+      const daysInMonth = 31;
+      for (let d = 1; d <= daysInMonth; d++) {
+        const dayDiv = document.createElement("div");
+        dayDiv.className = "calendar-day";
+        dayDiv.innerHTML = `<span>${d}</span>`;
+        const dots = document.createElement("div");
+        dots.className = "calendar-dot calendar-dot-task";
+        dayDiv.appendChild(dots);
+        grid.appendChild(dayDiv);
+      }
+    }
+
+    // ---------- Stats ----------
+    function renderStats() {
+      const container = document.getElementById("statsRow");
+      container.innerHTML = "";
+
+      const maxTasks = Math.max(...Object.values(data.stats.tasksDone || { Jordan: 0, Morgane: 0, Jade: 0, Ruby: 0, Phoebe: 0 }), 1);
+      const maxPenalties = Math.max(...Object.values(data.stats.penalties || { Jordan: 0, Morgane: 0, Jade: 0, Ruby: 0, Phoebe: 0 }), 1);
+      const maxRewards = Math.max(...Object.values(data.stats.rewardsBought || { Jordan: 0, Morgane: 0, Jade: 0, Ruby: 0, Phoebe: 0 }), 1);
+
+      data.members.forEach(m => {
+        const name = m.name;
+        const tasksDone = data.stats.tasksDone[name] || 0;
+        const penalties = data.stats.penalties[name] || 0;
+        const rewardsBought = data.stats.rewardsBought[name] || 0;
+
+        const row = document.createElement("div");
+        row.className = "stat-bar";
+        row.innerHTML = `
+          <div class="stat-label">${name}</div>
+          <div class="stat-bar-inner">
+            <div class="stat-bar-fill" style="width:${(tasksDone / maxTasks) * 100}%"></div>
+          </div>
+          <div class="stat-value">${tasksDone} tâches</div>
+        `;
+        container.appendChild(row);
+
+        const row2 = document.createElement("div");
+        row2.className = "stat-bar";
+        row2.innerHTML = `
+          <div class="stat-label"></div>
+          <div class="stat-bar-inner">
+            <div class="stat-bar-fill" style="width:${(penalties / maxPenalties) * 100}%;background:${"linear-gradient(90deg, " + "#ff4b4b" + ", " + "#ff8800" + ")"}"></div>
+          </div>
+          <div class="stat-value">${penalties} sanctions</div>
+        `;
+        container.appendChild(row2);
+
+        const row3 = document.createElement("div");
+        row3.className = "stat-bar";
+        row3.innerHTML = `
+          <div class="stat-label"></div>
+          <div class="stat-bar-inner">
+            <div class="stat-bar-fill" style="width:${(rewardsBought / maxRewards) * 100}%;background:${"linear-gradient(90deg, " + "#00e0ff" + ", " + "#39ff14" + ")"}"></div>
+          </div>
+          <div class="stat-value">${rewardsBought} récomp.</div>
+        `;
+        container.appendChild(row3);
+      });
+    }
+
+    // ---------- Paramètres : Membres ----------
+    function renderSettingsMembers() {
+      const list = document.getElementById("settingsMembersList");
+      list.innerHTML = "";
+      data.members.forEach((m, index) => {
+        const avatarClass = m.role === "parent" ? "avatar-parent" : "avatar-child";
+        const item = document.createElement("div");
+        item.className = "settings-item";
+        item.innerHTML = `
+          <div class="settings-item-main">
+            <span class="avatar ${avatarClass}">${m.name.charAt(0)}</span>
+            <div>
+              <div>${m.name}</div>
+              <div class="settings-item-meta">${m.role === "parent" ? "Parent" : "Enfant"}</div>
+            </div>
+          </div>
+          <div class="settings-actions">
+            <button class="btn btn-secondary" onclick="editMember(${index})">Modifier</button>
+            <button class="btn btn-danger" onclick="deleteMember(${index})">Supprimer</button>
+          </div>
+        `;
+        list.appendChild(item);
+      });
+    }
+
+    function addSettingsMember() {
+      const name = document.getElementById("settingsMemberNameInput").value.trim();
+      const role = document.getElementById("settingsMemberRoleInput").value;
+      if (!name) return;
+      data.members.push({ name, role });
+      if (!data.points[name]) data.points[name] = 0;
+      saveData(data);
+      renderFamily();
+      renderSettingsMembers();
+      populateMemberSelects();
+      document.getElementById("settingsMemberNameInput").value = "";
+    }
+
+    function editMember(index) {
+      const m = data.members[index];
+      const newName = prompt("Nouveau nom pour " + m.name, m.name);
+      if (!newName) return;
+      const oldName = m.name;
+      m.name = newName;
+      if (data.points[oldName] !== undefined) {
+        data.points[newName] = data.points[oldName];
+        delete data.points[oldName];
+      }
+      saveData(data);
+      renderFamily();
+      renderSettingsMembers();
+      populateMemberSelects();
+    }
+
+    function deleteMember(index) {
+      const m = data.members[index];
+      if (!confirm("Supprimer " + m.name + " ?")) return;
+      data.members.splice(index, 1);
+      delete data.points[m.name];
+      saveData(data);
+      renderFamily();
+      renderSettingsMembers();
+      populateMemberSelects();
+    }
+
+    // ---------- Paramètres : Tâches automatiques ----------
+    function renderSettingsAutoTasks() {
+      const list = document.getElementById("settingsAutoTasksList");
+      list.innerHTML = "";
+      data.autoTasks.forEach((t, index) => {
+        const item = document.createElement("div");
+        item.className = "settings-item";
+        item.innerHTML = `
+          <div class="settings-item-main">
+            <div>
+              <div><strong>${t.person}</strong> : ${t.name}</div>
+              <div class="settings-item-meta">${t.points} pts</div>
+            </div>
+          </div>
+          <div class="settings-actions">
+            <button class="btn btn-secondary" onclick="editAutoTask(${index})">Modifier</button>
+            <button class="btn btn-danger" onclick="deleteAutoTask(${index})">Supprimer</button>
+          </div>
+        `;
+        list.appendChild(item);
+      });
+    }
+
+    function addSettingsAutoTask() {
+      const person = document.getElementById("settingsAutoTaskPersonInput").value;
+      const name = document.getElementById("settingsAutoTaskNameInput").value.trim();
+      const points = parseInt(document.getElementById("settingsAutoTaskPointsInput").value, 10);
+      if (!person || !name || !points) return;
+      data.autoTasks.push({ person, name, points });
+      saveData(data);
+      renderSettingsAutoTasks();
+      document.getElementById("settingsAutoTaskNameInput").value = "";
+      document.getElementById("settingsAutoTaskPointsInput").value = "";
+    }
+
+    function editAutoTask(index) {
+      const t = data.autoTasks[index];
+      const newName = prompt("Nom de la tâche", t.name) || t.name;
+      const newPoints = parseInt(prompt("Points", t.points) || t.points, 10);
+      data.autoTasks[index] = { ...t, name: newName, points: newPoints };
+      saveData(data);
+      renderSettingsAutoTasks();
+    }
+
+    function deleteAutoTask(index) {
+      data.autoTasks.splice(index, 1);
+      saveData(data);
+      renderSettingsAutoTasks();
+    }
+
+    function generateAutoTasks() {
+      data.autoTasks.forEach(t => {
+        data.tasks.push({ name: t.name, person: t.person, points: t.points, done: false });
+      });
+      saveData(data);
+      renderTasks();
+      alert("Tâches automatiques générées.");
+    }
+
+    // ---------- Paramètres : Niveaux ----------
+    function renderSettingsLevelsInfo() {
+      const container = document.getElementById("settingsLevelsInfo");
+      container.innerHTML = "";
+      const levels = [
+        { range: "0–9 pts", label: "Niveau 1 · Débutant" },
+        { range: "10–24 pts", label: "Niveau 2 · Apprenti du foyer" },
+        { range: "25–39 pts", label: "Niveau 3 · Super aide" },
+        { range: "40–59 pts", label: "Niveau 4 · Pilier du foyer" },
+        { range: "60+ pts", label: "Niveau 5 · Héros du foyer" }
+      ];
+      levels.forEach(l => {
+        const item = document.createElement("div");
+        item.className = "settings-item";
+        item.innerHTML = `
+          <div>${l.range}</div>
+          <div class="settings-item-meta">${l.label}</div>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    // ---------- Paramètres : Réinitialisation ----------
+    function resetData() {
+      if (!confirm("Réinitialiser toutes les données (sauf les membres) ?")) return;
+      const membersCopy = structuredClone(data.members);
+      const pointsCopy = structuredClone(data.points);
+      data = structuredClone(defaultData);
+      data.members = membersCopy;
+      data.points = pointsCopy;
+      saveData(data);
+      renderAll();
+      alert("Données réinitialisées (sauf membres).");
+    }
+
+    // ---------- Paramètres : Import / Export ----------
+    function exportJson() {
+      const json = JSON.stringify(data, null, 2);
+      navigator.clipboard.writeText(json).then(() => {
+        alert("Données copiées dans le presse-papiers.");
+      }).catch(() => {
+        alert("Impossible de copier. Tu peux les récupérer via localStorage.");
+      });
+    }
+
+    function importJson() {
+      const raw = document.getElementById("importJsonTextarea").value.trim();
+      if (!raw) return;
+      try {
+        const imported = JSON.parse(raw);
+        data = imported;
+        saveData(data);
+        renderAll();
+        alert("Données importées avec succès.");
+      } catch {
+        alert("JSON invalide.");
+      }
+    }
+
+    // ---------- Sélecteurs de membres ----------
+    function populateMemberSelects() {
+      const selects = [
+        document.getElementById("taskPersonInput"),
+        document.getElementById("penaltyPersonInput"),
+        document.getElementById("goalPersonInput"),
+        document.getElementById("settingsAutoTaskPersonInput")
+      ];
+      selects.forEach(sel => {
+        sel.innerHTML = "";
+        data.members.forEach(m => {
+          const opt = document.createElement("option");
+          opt.value = m.name;
+          opt.textContent = m.name;
+          sel.appendChild(opt);
+        });
+      });
+    }
+
+    // ---------- Panneau Paramètres : navigation ----------
+    function setupSettingsPanel() {
+      const overlay = document.getElementById("settingsOverlay");
+      const openBtn = document.getElementById("openSettingsBtn");
+      const closeBtn = document.getElementById("closeSettingsBtn");
+      const navButtons = document.querySelectorAll(".settings-nav-btn");
+      const sections = document.querySelectorAll(".settings-section");
+
+      openBtn.addEventListener("click", () => {
+        overlay.classList.add("active");
+      });
+
+      closeBtn.addEventListener("click", () => {
+        overlay.classList.remove("active");
+      });
+
+      navButtons.forEach(btn => {
+        btn.addEventListener("click", () => {
+          navButtons.forEach(b => b.classList.remove("active"));
+          btn.classList.add("active");
+          const target = btn.dataset.section;
+          sections.forEach(sec => {
+            sec.classList.toggle("active", sec.id === target);
+          });
+        });
+      });
+    }
+
+    // ---------- Sauvegarde globale ----------
+    function saveAll() {
+      saveData(data);
+      alert("Toutes les données ont été sauvegardées.");
+    }
+
+    // ---------- Rendu global ----------
+    function renderAll() {
+      renderFamily();
+      renderTasks();
+      renderRewards();
+      renderPenalties();
+      renderGoals();
+      renderCalendar();
+      renderStats();
+      renderSettingsMembers();
+      renderSettingsAutoTasks();
+      renderSettingsLevelsInfo();
+      populateMemberSelects();
+      renderHistory();
+// Affichage du nom du clan
+  document.getElementById("clanDisplay").textContent = data.clanName || "";
+    }
+
+    // ---------- Initialisation ----------
+    function init() {
+      setupSettingsPanel();
+
+      document.getElementById("addTaskBtn").addEventListener("click", addTask);
+      document.getElementById("addRewardBtn").addEventListener("click", addReward);
+      document.getElementById("addPenaltyBtn").addEventListener("click", addPenalty);
+      document.getElementById("addGoalBtn").addEventListener("click", addGoal);
+
+      document.getElementById("settingsAddMemberBtn").addEventListener("click", addSettingsMember);
+      document.getElementById("settingsAddAutoTaskBtn").addEventListener("click", addSettingsAutoTask);
+      document.getElementById("generateAutoTasksBtn").addEventListener("click", generateAutoTasks);
+
+      document.getElementById("resetDataBtn").addEventListener("click", resetData);
+      document.getElementById("exportJsonBtn").addEventListener("click", exportJson);
+      document.getElementById("importJsonBtn").addEventListener("click", importJson);
+
+      document.getElementById("saveAllBtn").addEventListener("click", saveAll);
+
+      renderAll();
+    }
+
+    // Expose quelques fonctions au scope global pour les boutons inline
+    window.toggleTaskDone = toggleTaskDone;
+    window.deleteTask = deleteTask;
+    window.duplicateTask = duplicateTask;
+    window.buyReward = buyReward;
+    window.deleteReward = deleteReward;
+    window.addPenalty = addPenalty;
+    window.toggleGoalDone = toggleGoalDone;
+    window.deleteGoal = deleteGoal;
+    window.editMember = editMember;
+    window.deleteMember = deleteMember;
+    window.editAutoTask = editAutoTask;
+    window.deleteAutoTask = deleteAutoTask;
+
+    document.addEventListener("DOMContentLoaded", init);
+function showRewardAnimation(text) {
+  const div = document.createElement("div");
+  div.className = "reward-animation";
+  div.textContent = text;
+  document.body.appendChild(div);
+
+  setTimeout(() => {
+    div.remove();
+  }, 1200);
+}
+document.getElementById("fq-enter-btn").addEventListener("click", () => {
+  document.getElementById("fq-welcome").style.display = "none";
+});
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("service-worker.js")
+    .then(() => console.log("Service worker enregistré"))
+    .catch((err) => console.error("Erreur SW:", err));
+}
+
+/* ============================
+   ASSISTANT DE QUÊTE — CORRIGÉ
+   ============================ */
+
+let wizardMembers = [];
+
+function showSetupWizard() {
+  document.getElementById("setup-wizard").classList.remove("hidden");
+  nextScreen(1);
+}
+
+function nextScreen(id) {
+  document.querySelectorAll(".wizard-screen").forEach(s => s.classList.add("hidden"));
+  document.getElementById("screen-" + id).classList.remove("hidden");
+}
+
+function addMember() {
+  const container = document.getElementById("members-list");
+
+  const card = document.createElement("div");
+  card.className = "member-card";
+
+  card.innerHTML = `
+    <input class="wizard-input" placeholder="Nom du héros">
+    <select class="wizard-input">
+      <option value="parent">Parent</option>
+      <option value="child">Enfant</option>
+    </select>
+  `;
+
+  container.appendChild(card);
+  wizardMembers.push(card);
+}
+
+function finishSetup() {
+  const clanName = document.getElementById("clan-name").value.trim();
+
+  const finalMembers = wizardMembers.map(card => {
+    const inputs = card.querySelectorAll("input, select");
+    return {
+      name: inputs[0].value.trim(),
+      role: inputs[1].value
+    };
+  });
+
+  // Injecter dans la structure complète de l’app
+  data.members = finalMembers;
+  data.points = {};
+  data.tasks = [];
+  data.rewards = [];
+  data.penalties = [];
+  data.goals = [];
+  data.autoTasks = [];
+  data.stats = {
+    tasksDone: {},
+    penalties: {},
+    rewardsBought: {}
+  };
+  data.calendar = {};
+  data.history = [];
+  data.clanName = clanName;
+
+  saveData(data);
+
+  document.getElementById("setup-wizard").classList.add("hidden");
+  showMainApp();
+  renderAll();
+}
+
+// Si aucun membre → lancer l’assistant au démarrage
+if (!data.members || data.members.length === 0) {
+  showSetupWizard();
+}
+  </script>
+</body>
+</html>
