@@ -4,6 +4,7 @@
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#39ff14">
   <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Vie de famille & foyer</title>
   <style>
 #app.hidden { display: none; }
@@ -735,6 +736,81 @@
   border-radius: 6px;
   cursor: pointer;
   margin-left: auto;
+/* ============================
+   MODE MOBILE FAMILIQUEST
+   ============================ */
+
+@media (max-width: 768px) {
+
+  main {
+    padding: 10px;
+  }
+
+  .grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .card {
+    width: 100%;
+    padding: 12px;
+  }
+
+  header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 10px;
+  }
+
+  .fq-brand {
+    margin: 0;
+  }
+
+  .fq-logo {
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
+  }
+
+  .fq-name {
+    font-size: 1.1rem;
+  }
+
+  .header-actions {
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .settings-inline-inputs {
+    flex-direction: column;
+  }
+
+  .settings-inline-inputs input,
+  .settings-inline-inputs select,
+  .settings-inline-inputs button {
+    width: 100%;
+  }
+
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .card-header {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+}
 }
 </style>
 </head>
