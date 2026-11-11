@@ -1,10 +1,14 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b0b10">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#39ff14">
-  <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="apple-touch-icon" href="icon-192.png">
   <title>Vie de famille & foyer</title>
   <style>
 #app.hidden { display: none; }
@@ -728,89 +732,79 @@
   60% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
   100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
 }
-.btn-history {
-  padding: 0.2rem 0.4rem;
-  font-size: 0.8rem;
-  background: var(--secondary);
-  color: white;
-  border-radius: 6px;
-  cursor: pointer;
-  margin-left: auto;
-/* ============================
-   MODE MOBILE FAMILIQUEST
-   ============================ */
+.btn-history { display: none; }
+
+/* ===== Correctifs & mode mobile ===== */
+html { -webkit-text-size-adjust: 100%; }
+body { min-height: 100dvh; -webkit-tap-highlight-color: transparent; }
+button, input, select, textarea { touch-action: manipulation; }
+header .fq-logo { width: 44px; height: 44px; font-size: 1.1rem; margin: 0; border-radius: 12px; }
+header .fq-brand { margin: 0; gap: 10px; }
+header .fq-name { font-size: 1.4rem; }
+.wizard { overflow-y: auto; padding: 24px 16px; justify-content: flex-start; }
+.wizard-screen { margin: auto; width: 100%; }
+.wizard-title, .fq-welcome-title { font-size: clamp(1.7rem, 8vw, 2.6rem); }
+.wizard-input { width: 100%; font-size: 16px; min-height: 48px; }
+.wizard-btn, #fq-enter-btn { min-height: 48px; }
+.fq-welcome-content { padding: 0 20px; }
+.cal-head { text-align: center; color: var(--muted); font-size: 0.7rem; }
+.calendar-day { min-height: 44px; }
+.calendar-day.today { border-color: var(--accent2); }
+.settings-item { flex-wrap: wrap; gap: 0.5rem; }
+.tabbar { display: none; position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; gap: 4px;
+  background: rgba(5, 5, 10, 0.96); backdrop-filter: blur(12px); border-top: 1px solid var(--border);
+  padding: 6px 8px calc(6px + env(safe-area-inset-bottom)); }
+.tabbar button { flex: 1; min-height: 52px; background: none; border: 0; border-radius: 12px; color: var(--muted);
+  font-size: 0.72rem; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; }
+.tabbar button span { font-size: 1.3rem; }
+.tabbar button.active { color: var(--accent); background: rgba(57, 255, 20, 0.1); }
+.toast { position: fixed; left: 50%; bottom: calc(90px + env(safe-area-inset-bottom)); transform: translate(-50%, 20px);
+  background: #222235; border: 1px solid var(--accent2); padding: 0.7rem 1rem; border-radius: 12px; opacity: 0;
+  pointer-events: none; transition: 0.25s; z-index: 100000; max-width: 90vw; text-align: center; }
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+.sheet { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.6); display: flex; align-items: flex-end; z-index: 100001; }
+.sheet-box { width: 100%; max-height: 80dvh; overflow: auto; background: var(--bg-panel); border-radius: 18px 18px 0 0;
+  padding: 1rem 1rem calc(1rem + env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: 0.5rem; }
+.sheet-box h3 { margin: 0.2rem 0 0.4rem; font-size: 1rem; }
+.sheet-box .btn { justify-content: center; min-height: 48px; font-size: 1rem; }
+
+@media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
 
 @media (max-width: 768px) {
-
-  main {
-    padding: 10px;
-  }
-
-  .grid {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .card {
-    width: 100%;
-    padding: 12px;
-  }
-
-  header {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 10px;
-  }
-
-  .fq-brand {
-    margin: 0;
-  }
-
-  .fq-logo {
-    width: 60px;
-    height: 60px;
-    font-size: 1.5rem;
-  }
-
-  .fq-name {
-    font-size: 1.1rem;
-  }
-
-  .header-actions {
-    width: 100%;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-
-  .settings-inline-inputs {
-    flex-direction: column;
-  }
-
-  .settings-inline-inputs input,
-  .settings-inline-inputs select,
-  .settings-inline-inputs button {
-    width: 100%;
-  }
-
-  table {
-    display: block;
-    overflow-x: auto;
-    white-space: nowrap;
-  }
-
-  .card-header {
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  .btn {
-    width: 100%;
-    justify-content: center;
-  }
-
-}
+  header { flex-direction: row; align-items: center; padding: 0.6rem 0.9rem; padding-top: max(0.6rem, env(safe-area-inset-top)); }
+  .title-block, .lbl { display: none; }
+  .header-actions { width: auto; gap: 0.5rem; }
+  .header-actions .btn { width: 44px; height: 44px; padding: 0; justify-content: center; font-size: 1.1rem; }
+  main { padding: 0.75rem 0.75rem calc(88px + env(safe-area-inset-bottom)); }
+  .grid { display: block; }
+  main .card { display: none; margin-bottom: 0.75rem; padding: 0.9rem; }
+  main .card.tab-active { display: block; }
+  .tabbar { display: flex; }
+  .card-header { flex-wrap: wrap; gap: 4px; }
+  .btn { min-height: 44px; justify-content: center; }
+  input[type="text"], input[type="number"], select, textarea { font-size: 16px; min-height: 44px; }
+  .settings-inline-inputs > * { flex: 1 1 100%; }
+  /* tableaux -> cartes */
+  table, tbody, tr, td { display: block; width: 100%; }
+  thead { display: none; }
+  tr { background: #1a1a24; border: 1px solid var(--border); border-radius: 12px; padding: 0.5rem 0.75rem; margin-top: 0.5rem; }
+  td { border: 0 !important; padding: 0.2rem 0; display: flex; justify-content: space-between; align-items: center;
+       gap: 0.5rem; font-size: 0.95rem; }
+  td::before { content: attr(data-label); color: var(--muted); font-size: 0.75rem; }
+  td:first-child { font-weight: 600; }
+  td:first-child::before, td[data-label^="Action"]::before { display: none; }
+  td[data-label^="Action"] { flex-wrap: wrap; padding-top: 0.5rem; }
+  td[data-label^="Action"] .btn { flex: 1 1 auto; }
+  /* paramètres plein écran */
+  .settings-panel { flex-direction: column; }
+  .settings-sidebar { width: 100%; flex-direction: column; border-right: 0; border-bottom: 1px solid var(--border);
+    padding: 0.6rem; padding-top: max(0.6rem, env(safe-area-inset-top)); gap: 0.4rem; }
+  .settings-sidebar-header span, .settings-sidebar-footer span { display: none; }
+  .settings-sidebar-footer { margin-top: 0; }
+  .settings-nav { flex-direction: row; flex-wrap: nowrap; overflow-x: auto; margin-top: 0; }
+  .settings-nav-btn { white-space: nowrap; min-height: 40px; }
+  .settings-content { padding: 1rem 0.9rem calc(1rem + env(safe-area-inset-bottom)); }
+  .reward-animation { max-width: 90vw; font-size: 1.4rem; padding: 20px 24px; }
 }
 </style>
 </head>
@@ -861,8 +855,6 @@
 
 </div>
   <!-- Ton contenu FamiliQuest -->
-  <div id="app">
-  </div>
 
 <div id="fq-welcome">
   <div class="fq-welcome-content">
@@ -885,12 +877,11 @@
 <span id="clanDisplay" class="fq-clan"></span>
 </div>
     <div class="header-actions">
-      <button class="btn btn-secondary" id="openSettingsBtn">
-        <span class="icon">⚙️</span>
-        Paramètres
+      <button class="btn btn-secondary" id="openSettingsBtn" aria-label="Paramètres">
+        <span class="icon">⚙️</span><span class="lbl">Paramètres</span>
       </button>
-      <button class="btn btn-primary" id="saveAllBtn">
-        💾 Sauvegarder tout
+      <button class="btn btn-primary" id="saveAllBtn" aria-label="Sauvegarder">
+        <span class="icon">💾</span><span class="lbl">Sauvegarder tout</span>
       </button>
     </div>
   </header>
@@ -903,7 +894,6 @@
         <div class="card-header">
           <h2>Famille & points</h2>
           <span>Niveaux, badges & rôles</span>
-<button id="toggleHistoryBtn" class="btn-history">📜</button>
         </div>
         <table id="familyTable">
           <thead>
@@ -1042,7 +1032,7 @@
       <section class="card">
         <div class="card-header">
           <h2>Calendrier mensuel</h2>
-          <span>Octobre 2026</span>
+          <span id="calMonth"></span>
         </div>
         <div class="calendar-grid" id="calendarGrid">
           <!-- Rempli par JS -->
@@ -1183,13 +1173,48 @@
     </div>
   </div>
 
+  <nav class="tabbar" id="tabbar" aria-label="Navigation">
+    <button data-tab="family" class="active"><span>🏠</span>Famille</button>
+    <button data-tab="tasks"><span>✅</span>Tâches</button>
+    <button data-tab="shop"><span>🎁</span>Boutique</button>
+    <button data-tab="goals"><span>🎯</span>Objectifs</button>
+  </nav>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
   <!-- ---------- LOGIQUE JS ---------- -->
   <script>
-document.getElementById("app").classList.add("hidden");
-document.getElementById("toggleHistoryBtn").addEventListener("click", () => {
-  const historySection = document.querySelector("#historyTable").closest("section");
-  historySection.classList.toggle("hidden");
-});
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+let toastTimer;
+function toast(msg) {
+  const el = document.getElementById("toast");
+  el.textContent = msg;
+  el.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove("show"), 2600);
+}
+
+function pickMember(title, cb) {
+  const o = document.createElement("div");
+  o.className = "sheet";
+  o.innerHTML = `<div class="sheet-box"><h3>${esc(title)}</h3>` +
+    data.members.map((m, i) => `<button class="btn btn-secondary" data-i="${i}">${esc(m.name)} · ${data.points[m.name] || 0} pts</button>`).join("") +
+    `<button class="btn btn-danger" data-i="x">Annuler</button></div>`;
+  o.onclick = e => {
+    const b = e.target.closest("button");
+    if (e.target === o || b) {
+      o.remove();
+      if (b && b.dataset.i !== "x") cb(data.members[+b.dataset.i].name);
+    }
+  };
+  document.body.appendChild(o);
+}
+
+function setTab(t) {
+  document.querySelectorAll("main .card").forEach(c => c.classList.toggle("tab-active", c.dataset.tab === t));
+  document.querySelectorAll("#tabbar button").forEach(b => b.classList.toggle("active", b.dataset.tab === t));
+  window.scrollTo(0, 0);
+}
     // ---------- Données & stockage ----------
     const STORAGE_KEY = "familyBoardV2";
 
@@ -1209,14 +1234,12 @@ document.getElementById("toggleHistoryBtn").addEventListener("click", () => {
       calendar: {},
       history: [],
     };
-function showMainApp() {
-  document.getElementById("app").classList.remove("hidden");
-}
+function showMainApp() {}
     function loadData() {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) return structuredClone(defaultData);
       try {
-        return JSON.parse(raw);
+        return Object.assign(structuredClone(defaultData), JSON.parse(raw));
       } catch {
         return structuredClone(defaultData);
       }
@@ -1228,6 +1251,7 @@ function showMainApp() {
 
     let data = loadData();
 if (!data.history) data.history = [];
+data.stats = Object.assign({ tasksDone: {}, penalties: {}, rewardsBought: {} }, data.stats);
 
     // ---------- Utilitaires ----------
     function getLevel(points) {
@@ -1272,8 +1296,8 @@ if (!data.history) data.history = [];
         const tr = document.createElement("tr");
         tr.innerHTML = `
           <td>
-            <span class="avatar ${avatarClass}">${m.name.charAt(0)}</span>
-            ${m.name}
+            <span class="avatar ${avatarClass}">${esc(m.name.charAt(0))}</span>
+            ${esc(m.name)}
             <span class="pill">${m.role === "parent" ? "Parent" : "Enfant"}</span>
           </td>
           <td>${pts}</td>
@@ -1288,13 +1312,13 @@ function renderHistory() {
   const tbody = document.querySelector("#historyTable tbody");
   tbody.innerHTML = "";
 
-  data.history.forEach(h => {
+  data.history.slice(-30).reverse().forEach(h => {
     const tr = document.createElement("tr");
     tr.innerHTML = `
-      <td>${h.name}</td>
-      <td>${h.person}</td>
+      <td>${esc(h.name)}</td>
+      <td>${esc(h.person)}</td>
       <td>${h.points}</td>
-      <td>${h.date}</td>
+      <td>${esc(h.date)}</td>
     `;
     tbody.appendChild(tr);
   });
@@ -1307,8 +1331,8 @@ function renderHistory() {
       data.tasks.forEach((t, index) => {
         const tr = document.createElement("tr");
         tr.innerHTML = `
-          <td>${t.name}</td>
-          <td>${t.person}</td>
+          <td>${esc(t.name)}</td>
+          <td>${esc(t.person)}</td>
           <td>${t.points}</td>
           <td class="${t.done ? "status-done" : "status-pending"}">
             ${t.done ? "✔ Terminée" : "En cours"}
@@ -1334,8 +1358,8 @@ function renderHistory() {
   const person = document.getElementById("taskPersonInput").value;
   const points = parseFloat(document.getElementById("taskPointsInput").value);
 
-  if (points !== 0.5 && !Number.isInteger(points)) {
-    alert("Tu peux seulement mettre 0,5 ou un nombre entier.");
+  if (!(points === 0.5 || (Number.isInteger(points) && points > 0))) {
+    toast("Tu peux seulement mettre 0,5 ou un nombre entier.");
     return;
   }
 
@@ -1360,7 +1384,8 @@ function toggleTaskDone(index) {
     name: t.name,
     person: t.person,
     points: t.points,
-    date: new Date().toLocaleString()
+    date: new Date().toLocaleString("fr-FR", { dateStyle: "short", timeStyle: "short" }),
+    iso: new Date().toISOString()
   });
 
   // Stats
@@ -1408,7 +1433,7 @@ function toggleTaskDone(index) {
         const tr = document.createElement("tr");
         tr.innerHTML = `
           <td>${r.points}</td>
-          <td>${r.desc}</td>
+          <td>${esc(r.desc)}</td>
           <td>
             <button class="btn btn-secondary" onclick="buyReward(${index})">Acheter</button>
             <button class="btn btn-danger" onclick="deleteReward(${index})">Supprimer</button>
@@ -1423,8 +1448,8 @@ function toggleTaskDone(index) {
   const desc = document.getElementById("rewardDescInput").value.trim();
 
   // Autoriser seulement 0,5 ou un entier
-  if (points !== 0.5 && !Number.isInteger(points)) {
-    alert("Tu peux seulement mettre 0,5 ou un nombre entier.");
+  if (!(points === 0.5 || (Number.isInteger(points) && points > 0))) {
+    toast("Tu peux seulement mettre 0,5 ou un nombre entier.");
     return;
   }
 
@@ -1446,18 +1471,18 @@ function toggleTaskDone(index) {
 
     function buyReward(index) {
       const r = data.rewards[index];
-      const person = prompt("Qui achète cette récompense ?");
-      if (!person || !data.points[person]) return;
-      if (data.points[person] < r.points) {
-        alert(person + " n'a pas assez de points.");
-        return;
-      }
-      data.points[person] -= r.points;
-      updateStatsForReward(person);
-      saveData(data);
-      renderFamily();
-      renderStats();
-      showRewardAnimation(person + " a acheté : " + r.desc);
+      pickMember("Qui achète : " + r.desc + " ?", person => {
+        if ((data.points[person] || 0) < r.points) {
+          toast(person + " n'a pas assez de points.");
+          return;
+        }
+        data.points[person] -= r.points;
+        updateStatsForReward(person);
+        saveData(data);
+        renderFamily();
+        renderStats();
+        showRewardAnimation(person + " a acheté : " + r.desc);
+      });
     }
 
     // ---------- Sanctions ----------
@@ -1467,9 +1492,9 @@ function toggleTaskDone(index) {
       data.penalties.forEach(p => {
         const tr = document.createElement("tr");
         tr.innerHTML = `
-          <td>${p.person}</td>
+          <td>${esc(p.person)}</td>
           <td>${p.points}</td>
-          <td>${p.reason}</td>
+          <td>${esc(p.reason)}</td>
         `;
         tbody.appendChild(tr);
       });
@@ -1481,8 +1506,8 @@ function toggleTaskDone(index) {
   const reason = document.getElementById("penaltyReasonInput").value.trim();
 
   // Autoriser seulement 0,5 ou un entier
-  if (points !== 0.5 && !Number.isInteger(points)) {
-    alert("Tu peux seulement mettre 0,5 ou un nombre entier.");
+  if (!(points === 0.5 || (Number.isInteger(points) && points > 0))) {
+    toast("Tu peux seulement mettre 0,5 ou un nombre entier.");
     return;
   }
 
@@ -1507,8 +1532,8 @@ function toggleTaskDone(index) {
       data.goals.forEach((g, index) => {
         const tr = document.createElement("tr");
         tr.innerHTML = `
-          <td>${g.person}</td>
-          <td>${g.text}</td>
+          <td>${esc(g.person)}</td>
+          <td>${esc(g.text)}</td>
           <td>${g.done ? "✔ Atteint" : "En cours"}</td>
           <td>
             <button class="btn btn-secondary" onclick="toggleGoalDone(${index})">
@@ -1549,17 +1574,19 @@ function toggleTaskDone(index) {
     // ---------- Calendrier ----------
     function renderCalendar() {
       const grid = document.getElementById("calendarGrid");
-      grid.innerHTML = "";
-      const daysInMonth = 31;
-      for (let d = 1; d <= daysInMonth; d++) {
-        const dayDiv = document.createElement("div");
-        dayDiv.className = "calendar-day";
-        dayDiv.innerHTML = `<span>${d}</span>`;
-        const dots = document.createElement("div");
-        dots.className = "calendar-dot calendar-dot-task";
-        dayDiv.appendChild(dots);
-        grid.appendChild(dayDiv);
+      const now = new Date(), y = now.getFullYear(), mo = now.getMonth();
+      const doneDays = new Set();
+      data.history.forEach(h => {
+        const d = new Date(h.iso || "");
+        if (d.getFullYear() === y && d.getMonth() === mo) doneDays.add(d.getDate());
+      });
+      const offset = (new Date(y, mo, 1).getDay() + 6) % 7;
+      let html = ["L", "M", "M", "J", "V", "S", "D"].map(d => `<div class="cal-head">${d}</div>`).join("") + "<div></div>".repeat(offset);
+      for (let d = 1, n = new Date(y, mo + 1, 0).getDate(); d <= n; d++) {
+        html += `<div class="calendar-day${d === now.getDate() ? " today" : ""}"><span>${d}</span>${doneDays.has(d) ? '<div class="calendar-dot calendar-dot-task"></div>' : ""}</div>`;
       }
+      grid.innerHTML = html;
+      document.getElementById("calMonth").textContent = now.toLocaleDateString("fr-FR", { month: "long", year: "numeric" });
     }
 
     // ---------- Stats ----------
@@ -1567,9 +1594,9 @@ function toggleTaskDone(index) {
       const container = document.getElementById("statsRow");
       container.innerHTML = "";
 
-      const maxTasks = Math.max(...Object.values(data.stats.tasksDone || { Jordan: 0, Morgane: 0, Jade: 0, Ruby: 0, Phoebe: 0 }), 1);
-      const maxPenalties = Math.max(...Object.values(data.stats.penalties || { Jordan: 0, Morgane: 0, Jade: 0, Ruby: 0, Phoebe: 0 }), 1);
-      const maxRewards = Math.max(...Object.values(data.stats.rewardsBought || { Jordan: 0, Morgane: 0, Jade: 0, Ruby: 0, Phoebe: 0 }), 1);
+      const maxTasks = Math.max(...Object.values(data.stats.tasksDone || {}), 1);
+      const maxPenalties = Math.max(...Object.values(data.stats.penalties || {}), 1);
+      const maxRewards = Math.max(...Object.values(data.stats.rewardsBought || {}), 1);
 
       data.members.forEach(m => {
         const name = m.name;
@@ -1580,7 +1607,7 @@ function toggleTaskDone(index) {
         const row = document.createElement("div");
         row.className = "stat-bar";
         row.innerHTML = `
-          <div class="stat-label">${name}</div>
+          <div class="stat-label">${esc(name)}</div>
           <div class="stat-bar-inner">
             <div class="stat-bar-fill" style="width:${(tasksDone / maxTasks) * 100}%"></div>
           </div>
@@ -1622,9 +1649,9 @@ function toggleTaskDone(index) {
         item.className = "settings-item";
         item.innerHTML = `
           <div class="settings-item-main">
-            <span class="avatar ${avatarClass}">${m.name.charAt(0)}</span>
+            <span class="avatar ${avatarClass}">${esc(m.name.charAt(0))}</span>
             <div>
-              <div>${m.name}</div>
+              <div>${esc(m.name)}</div>
               <div class="settings-item-meta">${m.role === "parent" ? "Parent" : "Enfant"}</div>
             </div>
           </div>
@@ -1660,6 +1687,11 @@ function toggleTaskDone(index) {
         data.points[newName] = data.points[oldName];
         delete data.points[oldName];
       }
+      ["tasks", "goals", "autoTasks", "penalties", "history"].forEach(k => data[k].forEach(x => { if (x.person === oldName) x.person = newName; }));
+      ["tasksDone", "penalties", "rewardsBought"].forEach(k => {
+        if (data.stats[k][oldName] !== undefined) { data.stats[k][newName] = data.stats[k][oldName]; delete data.stats[k][oldName]; }
+      });
+      renderAll();
       saveData(data);
       renderFamily();
       renderSettingsMembers();
@@ -1687,7 +1719,7 @@ function toggleTaskDone(index) {
         item.innerHTML = `
           <div class="settings-item-main">
             <div>
-              <div><strong>${t.person}</strong> : ${t.name}</div>
+              <div><strong>${esc(t.person)}</strong> : ${esc(t.name)}</div>
               <div class="settings-item-meta">${t.points} pts</div>
             </div>
           </div>
@@ -1733,7 +1765,7 @@ function toggleTaskDone(index) {
       });
       saveData(data);
       renderTasks();
-      alert("Tâches automatiques générées.");
+      toast("Tâches automatiques générées.");
     }
 
     // ---------- Paramètres : Niveaux ----------
@@ -1768,16 +1800,20 @@ function toggleTaskDone(index) {
       data.points = pointsCopy;
       saveData(data);
       renderAll();
-      alert("Données réinitialisées (sauf membres).");
+      toast("Données réinitialisées (sauf membres).");
     }
 
     // ---------- Paramètres : Import / Export ----------
     function exportJson() {
       const json = JSON.stringify(data, null, 2);
-      navigator.clipboard.writeText(json).then(() => {
-        alert("Données copiées dans le presse-papiers.");
+      (navigator.clipboard?.writeText(json) ?? Promise.reject()).then(() => {
+        toast("Données copiées dans le presse-papiers.");
       }).catch(() => {
-        alert("Impossible de copier. Tu peux les récupérer via localStorage.");
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(new Blob([json], { type: "application/json" }));
+        a.download = "familiquest.json";
+        a.click();
+        toast("Sauvegarde téléchargée en fichier JSON.");
       });
     }
 
@@ -1786,12 +1822,14 @@ function toggleTaskDone(index) {
       if (!raw) return;
       try {
         const imported = JSON.parse(raw);
-        data = imported;
+        if (!imported || !Array.isArray(imported.members)) throw new Error("format");
+        data = Object.assign(structuredClone(defaultData), imported);
+        data.stats = Object.assign({ tasksDone: {}, penalties: {}, rewardsBought: {} }, data.stats);
         saveData(data);
         renderAll();
-        alert("Données importées avec succès.");
+        toast("Données importées avec succès.");
       } catch {
-        alert("JSON invalide.");
+        toast("JSON invalide.");
       }
     }
 
@@ -1845,7 +1883,7 @@ function toggleTaskDone(index) {
     // ---------- Sauvegarde globale ----------
     function saveAll() {
       saveData(data);
-      alert("Toutes les données ont été sauvegardées.");
+      toast("Toutes les données ont été sauvegardées.");
     }
 
     // ---------- Rendu global ----------
@@ -1885,6 +1923,22 @@ function toggleTaskDone(index) {
 
       document.getElementById("saveAllBtn").addEventListener("click", saveAll);
 
+      // Onglets mobiles : chaque carte est rattachée à un onglet
+      const tabs = ["family", "tasks", "tasks", "shop", "goals", "goals", "family"];
+      document.querySelectorAll("main .card").forEach((c, i) => c.dataset.tab = tabs[i]);
+      document.getElementById("tabbar").addEventListener("click", e => {
+        const b = e.target.closest("button");
+        if (b) setTab(b.dataset.tab);
+      });
+      setTab("family");
+
+      // Étiquettes des colonnes pour l'affichage en cartes sur mobile
+      document.querySelectorAll("table").forEach(t => {
+        const heads = [...t.querySelectorAll("th")].map(h => h.textContent.trim());
+        const fill = () => t.querySelectorAll("tbody td").forEach(td => td.dataset.label = heads[td.cellIndex] || "");
+        new MutationObserver(fill).observe(t.tBodies[0], { childList: true });
+      });
+
       renderAll();
     }
 
@@ -1916,6 +1970,8 @@ function showRewardAnimation(text) {
 document.getElementById("fq-enter-btn").addEventListener("click", () => {
   document.getElementById("fq-welcome").style.display = "none";
 });
+// Écran d'accueil : affiché seulement à la première utilisation
+if (data.members && data.members.length) document.getElementById("fq-welcome").style.display = "none";
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("service-worker.js")
     .then(() => console.log("Service worker enregistré"))
@@ -1934,6 +1990,7 @@ function showSetupWizard() {
 }
 
 function nextScreen(id) {
+  if (id === 3 && !wizardMembers.length) addMember();
   document.querySelectorAll(".wizard-screen").forEach(s => s.classList.add("hidden"));
   document.getElementById("screen-" + id).classList.remove("hidden");
 }
@@ -1965,11 +2022,17 @@ function finishSetup() {
       name: inputs[0].value.trim(),
       role: inputs[1].value
     };
-  });
+  }).filter(m => m.name);
+
+  if (!finalMembers.length) {
+    toast("Ajoute au moins un héros.");
+    nextScreen(3);
+    return;
+  }
 
   // Injecter dans la structure complète de l’app
   data.members = finalMembers;
-  data.points = {};
+  data.points = Object.fromEntries(finalMembers.map(m => [m.name, 0]));
   data.tasks = [];
   data.rewards = [];
   data.penalties = [];
