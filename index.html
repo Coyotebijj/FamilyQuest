@@ -768,6 +768,12 @@ header .fq-name { font-size: 1.4rem; }
 .sheet-box h3 { margin: 0.2rem 0 0.4rem; font-size: 1rem; }
 .sheet-box .btn { justify-content: center; min-height: 48px; font-size: 1rem; }
 
+.xp { height: 8px; border-radius: 99px; background: #222235; overflow: hidden; min-width: 110px; margin: 4px 0 2px; }
+.xp i { display: block; height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); }
+.lvl small { color: var(--muted); font-size: 0.72rem; }
+.hero-box { background: #1a1a24; border: 1px solid var(--border); border-radius: 12px; padding: 0.7rem 0.9rem;
+  margin-bottom: 0.8rem; display: flex; flex-direction: column; gap: 0.2rem; }
+.hero-box small { color: var(--muted); margin-top: 0.3rem; }
 @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
 
 @media (max-width: 768px) {
@@ -918,7 +924,6 @@ header .fq-name { font-size: 1.4rem; }
         </div>
         <div class="settings-inline-inputs">
           <input type="text" id="taskNameInput" placeholder="Nom de la tâche" />
-          <select id="taskPersonInput"></select>
           <input type="number" id="taskPointsInput" placeholder="Points" min="0.5" step="0.5" />
           <button class="btn btn-primary" id="addTaskBtn">+ Ajouter</button>
         </div>
@@ -926,7 +931,6 @@ header .fq-name { font-size: 1.4rem; }
           <thead>
             <tr>
               <th>Tâche</th>
-              <th>Personne</th>
               <th>Points</th>
               <th>Statut</th>
               <th>Actions</th>
@@ -1113,11 +1117,19 @@ header .fq-name { font-size: 1.4rem; }
         <!-- Tâches automatiques -->
         <div class="settings-section" id="autoTasksSection">
           <h3>Tâches automatiques</h3>
-          <p>Définis des tâches récurrentes. Elles peuvent être générées manuellement via le bouton dédié.</p>
+          <p>Les tâches « chaque jour » ou « chaque semaine » apparaissent toutes seules à l'ouverture de l'app. Tu choisis qui les a faites au moment de les valider.</p>
           <div class="settings-inline-inputs">
-            <select id="settingsAutoTaskPersonInput"></select>
             <input type="text" id="settingsAutoTaskNameInput" placeholder="Nom de la tâche" />
-            <input type="number" id="settingsAutoTaskPointsInput" placeholder="Points" min="1" />
+            <input type="number" id="settingsAutoTaskPointsInput" placeholder="Points" min="0.5" step="0.5" />
+            <select id="settingsAutoFreq">
+              <option value="none">Manuelle</option>
+              <option value="daily">Chaque jour</option>
+              <option value="weekly">Chaque semaine</option>
+            </select>
+            <select id="settingsAutoDay" style="display:none">
+              <option value="1">Lundi</option><option value="2">Mardi</option><option value="3">Mercredi</option>
+              <option value="4">Jeudi</option><option value="5">Vendredi</option><option value="6">Samedi</option><option value="0">Dimanche</option>
+            </select>
             <button class="btn btn-primary" id="settingsAddAutoTaskBtn">+ Ajouter une tâche auto</button>
           </div>
           <div class="settings-list" id="settingsAutoTasksList">
@@ -1186,12 +1198,21 @@ header .fq-name { font-size: 1.4rem; }
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
 let toastTimer;
-function toast(msg) {
+function toast(msg, label, fn) {
   const el = document.getElementById("toast");
   el.textContent = msg;
+  if (label) {
+    const b = document.createElement("button");
+    b.className = "btn btn-secondary";
+    b.textContent = label;
+    b.style.marginLeft = "0.6rem";
+    b.onclick = () => { el.classList.remove("show"); fn(); };
+    el.appendChild(b);
+  }
+  el.style.pointerEvents = label ? "auto" : "none";
   el.classList.add("show");
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => el.classList.remove("show"), 2600);
+  toastTimer = setTimeout(() => el.classList.remove("show"), label ? 7000 : 2600);
 }
 
 function pickMember(title, cb) {
@@ -1216,6 +1237,48 @@ function setTab(t) {
   window.scrollTo(0, 0);
 }
     // ---------- Données & stockage ----------
+    const mkey = d => isNaN(d) ? "" : d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
+    const dkey = d => mkey(d) + "-" + String(d.getDate()).padStart(2, "0");
+    const monthLabel = k => new Date(+k.slice(0, 4), +k.slice(5, 7) - 1, 1).toLocaleDateString("fr-FR", { month: "long", year: "numeric" });
+
+    function levelCell(pts, lvl) {
+      const T = [0, 10, 25, 40, 60], i = lvl.level - 1, next = T[i + 1];
+      const pct = next === undefined ? 100 : Math.round((pts - T[i]) / (next - T[i]) * 100);
+      const reste = next === undefined ? 0 : next - pts;
+      const txt = next === undefined ? "Niveau max 🏆" : `encore ${reste} pt${reste > 1 ? "s" : ""} pour le niveau ${lvl.level + 1}`;
+      return `<div class="lvl"><span class="badge badge-level">Niveau ${lvl.level}</span><div class="xp"><i style="width:${pct}%"></i></div><small>${txt}</small></div>`;
+    }
+
+    function checkMonth() {
+      const cur = mkey(new Date());
+      if (data.month === cur) return;
+      const old = data.month, pts = {};
+      data.history.forEach(h => { if (mkey(new Date(h.iso || "")) === old) pts[h.person] = (pts[h.person] || 0) + h.points; });
+      const best = Math.max(0, ...Object.values(pts));
+      if (best > 0) {
+        const c = { month: old, label: monthLabel(old), names: Object.keys(pts).filter(n => pts[n] === best), points: best };
+        data.heroes = [...data.heroes, c].slice(-12);
+        data.pendingCongrats = c;
+      }
+      data.stats = { tasksDone: {}, penalties: {}, rewardsBought: {} };
+      data.month = cur;
+      saveData(data);
+    }
+
+    function maybeShowCongrats() {
+      const w = document.getElementById("fq-welcome");
+      if (!data.pendingCongrats || getComputedStyle(w).display !== "none") return;
+      const c = data.pendingCongrats;
+      data.pendingCongrats = null;
+      saveData(data);
+      const o = document.createElement("div");
+      o.className = "sheet";
+      o.style.cssText = "align-items:center;justify-content:center;padding:1rem";
+      o.innerHTML = `<div class="sheet-box" style="max-width:420px;border-radius:18px;text-align:center"><div style="font-size:3.2rem">🏆</div><h3>Héros de ${esc(c.label)}</h3><p style="font-size:1.3rem;margin:0">${esc(c.names.join(" & "))}</p><p>${c.points} points gagnés ! Les stats repartent à zéro, bonne chance pour le nouveau mois.</p><button class="btn btn-primary">Super !</button></div>`;
+      o.onclick = e => { if (e.target === o || e.target.closest("button")) o.remove(); };
+      document.body.appendChild(o);
+    }
+
     const STORAGE_KEY = "familyBoardV2";
 
     const defaultData = {
@@ -1233,6 +1296,8 @@ function setTab(t) {
       },
       calendar: {},
       history: [],
+      heroes: [],
+      month: mkey(new Date()),
     };
 function showMainApp() {}
     function loadData() {
@@ -1301,7 +1366,7 @@ data.stats = Object.assign({ tasksDone: {}, penalties: {}, rewardsBought: {} }, 
             <span class="pill">${m.role === "parent" ? "Parent" : "Enfant"}</span>
           </td>
           <td>${pts}</td>
-          <td><span class="badge badge-level">Niveau ${lvl.level}</span></td>
+          <td>${levelCell(pts, lvl)}</td>
           <td>${badges.map(b => `<span class="badge">${b}</span>`).join(" ")}</td>
         `;
         tbody.appendChild(tr);
@@ -1332,14 +1397,13 @@ function renderHistory() {
         const tr = document.createElement("tr");
         tr.innerHTML = `
           <td>${esc(t.name)}</td>
-          <td>${esc(t.person)}</td>
           <td>${t.points}</td>
           <td class="${t.done ? "status-done" : "status-pending"}">
             ${t.done ? "✔ Terminée" : "En cours"}
           </td>
           <td>
             <button class="btn btn-secondary" onclick="toggleTaskDone(${index})">
-              ${t.done ? "Annuler" : "Valider"}
+              Valider
             </button>
             <button class="btn btn-secondary" onclick="duplicateTask(${index})">
               Dupliquer
@@ -1355,7 +1419,6 @@ function renderHistory() {
 
     function addTask() {
   const name = document.getElementById("taskNameInput").value.trim();
-  const person = document.getElementById("taskPersonInput").value;
   const points = parseFloat(document.getElementById("taskPointsInput").value);
 
   if (!(points === 0.5 || (Number.isInteger(points) && points > 0))) {
@@ -1363,9 +1426,9 @@ function renderHistory() {
     return;
   }
 
-      if (!name || !person || !points) return;
+      if (!name || !points) return;
 
-      data.tasks.push({ name, person, points, done: false });
+      data.tasks.push({ name, points, done: false });
       saveData(data);
       renderTasks();
       renderStats();
@@ -1375,36 +1438,34 @@ function renderHistory() {
 
 function toggleTaskDone(index) {
   const t = data.tasks[index];
-
-  // Ajouter les points
-  data.points[t.person] = (data.points[t.person] || 0) + t.points;
-
-  // Ajouter dans l'historique
-  data.history.push({
-    name: t.name,
-    person: t.person,
-    points: t.points,
-    date: new Date().toLocaleString("fr-FR", { dateStyle: "short", timeStyle: "short" }),
-    iso: new Date().toISOString()
+  pickMember("Qui a fait : " + t.name + " ?", person => {
+    const i = data.tasks.indexOf(t);
+    if (i < 0) return;
+    const iso = new Date().toISOString();
+    data.points[person] = (data.points[person] || 0) + t.points;
+    data.history.push({
+      name: t.name, person, points: t.points, iso,
+      date: new Date().toLocaleString("fr-FR", { dateStyle: "short", timeStyle: "short" })
+    });
+    updateStatsForTask(person, true);
+    data.tasks.splice(i, 1);
+    saveData(data);
+    renderFamily(); renderTasks(); renderHistory(); renderStats(); renderCalendar();
+    toast(`+${t.points} pt${t.points > 1 ? "s" : ""} pour ${person}`, "Annuler", () => undoTask(t, person, iso, i));
   });
-
-  // Stats
-  updateStatsForTask(t.person, true);
-
-  // Supprimer de la liste des tâches
-  data.tasks.splice(index, 1);
-
-  // Sauvegarde
-  saveData(data);
-
-  // Rendu
-  renderFamily();
-  renderTasks();
-  renderHistory();
-  renderStats();
 }
 
-    
+function undoTask(t, person, iso, i) {
+  const h = data.history.findIndex(x => x.iso === iso);
+  if (h < 0) return;
+  data.history.splice(h, 1);
+  data.points[person] = Math.max(0, (data.points[person] || 0) - t.points);
+  updateStatsForTask(person, false);
+  data.tasks.splice(Math.min(i, data.tasks.length), 0, t);
+  saveData(data);
+  renderFamily(); renderTasks(); renderHistory(); renderStats(); renderCalendar();
+}
+
     function deleteTask(index) {
       const t = data.tasks[index];
       if (t.done) {
@@ -1593,6 +1654,16 @@ function toggleTaskDone(index) {
     function renderStats() {
       const container = document.getElementById("statsRow");
       container.innerHTML = "";
+      const key = mkey(new Date()), mp = {};
+      data.history.forEach(h => { if (mkey(new Date(h.iso || "")) === key) mp[h.person] = (mp[h.person] || 0) + h.points; });
+      const rank = Object.entries(mp).sort((a, b) => b[1] - a[1]);
+      const last = data.heroes[data.heroes.length - 1];
+      const head = document.createElement("div");
+      head.className = "hero-box";
+      head.innerHTML = `<strong>🏆 Classement de ${esc(monthLabel(key))}</strong>` +
+        (rank.length ? rank.map((r, i) => `<div>${["🥇", "🥈", "🥉"][i] || "▫️"} ${esc(r[0])} · ${r[1]} pts</div>`).join("") : "<div>Pas encore de points ce mois-ci.</div>") +
+        (last ? `<small>Héros de ${esc(last.label)} : ${esc(last.names.join(" & "))}</small>` : "");
+      container.appendChild(head);
 
       const maxTasks = Math.max(...Object.values(data.stats.tasksDone || {}), 1);
       const maxPenalties = Math.max(...Object.values(data.stats.penalties || {}), 1);
@@ -1710,6 +1781,33 @@ function toggleTaskDone(index) {
     }
 
     // ---------- Paramètres : Tâches automatiques ----------
+    const JOURS = ["dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"];
+    const freqLabel = t => t.freq === "daily" ? "chaque jour" : t.freq === "weekly" ? "chaque " + JOURS[t.dow] : "manuelle";
+
+    // Date de la dernière échéance (aujourd'hui, ou le dernier jour de semaine choisi)
+    function lastDue(t, now) {
+      const d = new Date(now);
+      if (t.freq === "weekly") d.setDate(d.getDate() - ((d.getDay() - t.dow + 7) % 7));
+      return dkey(d);
+    }
+
+    // Crée les tâches récurrentes arrivées à échéance (sans doublon si l'ancienne n'est pas validée)
+    function runRecurring() {
+      const now = new Date();
+      let changed = false;
+      data.autoTasks.forEach(t => {
+        if (t.freq !== "daily" && t.freq !== "weekly") return;
+        const due = lastDue(t, now);
+        if ((t.last || "") >= due) return;
+        t.last = due;
+        changed = true;
+        if (!data.tasks.some(x => x.auto && x.name === t.name)) {
+          data.tasks.push({ name: t.name, points: t.points, done: false, auto: true });
+        }
+      });
+      if (changed) saveData(data);
+    }
+
     function renderSettingsAutoTasks() {
       const list = document.getElementById("settingsAutoTasksList");
       list.innerHTML = "";
@@ -1719,8 +1817,8 @@ function toggleTaskDone(index) {
         item.innerHTML = `
           <div class="settings-item-main">
             <div>
-              <div><strong>${esc(t.person)}</strong> : ${esc(t.name)}</div>
-              <div class="settings-item-meta">${t.points} pts</div>
+              <div><strong>${esc(t.name)}</strong></div>
+              <div class="settings-item-meta">${t.points} pts · ${freqLabel(t)}</div>
             </div>
           </div>
           <div class="settings-actions">
@@ -1733,13 +1831,22 @@ function toggleTaskDone(index) {
     }
 
     function addSettingsAutoTask() {
-      const person = document.getElementById("settingsAutoTaskPersonInput").value;
       const name = document.getElementById("settingsAutoTaskNameInput").value.trim();
-      const points = parseInt(document.getElementById("settingsAutoTaskPointsInput").value, 10);
-      if (!person || !name || !points) return;
-      data.autoTasks.push({ person, name, points });
+      const points = parseFloat(document.getElementById("settingsAutoTaskPointsInput").value);
+      const freq = document.getElementById("settingsAutoFreq").value;
+      const dow = +document.getElementById("settingsAutoDay").value;
+      if (!name || !(points === 0.5 || (Number.isInteger(points) && points > 0))) {
+        toast("Il faut un nom et des points (0,5 ou un nombre entier).");
+        return;
+      }
+      const t = { name, points, freq, dow };
+      const due = lastDue(t, new Date());
+      t.last = due === dkey(new Date()) ? "" : due;   // jour d'échéance = aujourd'hui : créée tout de suite
+      data.autoTasks.push(t);
+      runRecurring();
       saveData(data);
       renderSettingsAutoTasks();
+      renderTasks();
       document.getElementById("settingsAutoTaskNameInput").value = "";
       document.getElementById("settingsAutoTaskPointsInput").value = "";
     }
@@ -1747,7 +1854,7 @@ function toggleTaskDone(index) {
     function editAutoTask(index) {
       const t = data.autoTasks[index];
       const newName = prompt("Nom de la tâche", t.name) || t.name;
-      const newPoints = parseInt(prompt("Points", t.points) || t.points, 10);
+      const newPoints = parseFloat(prompt("Points", t.points) || t.points);
       data.autoTasks[index] = { ...t, name: newName, points: newPoints };
       saveData(data);
       renderSettingsAutoTasks();
@@ -1760,9 +1867,7 @@ function toggleTaskDone(index) {
     }
 
     function generateAutoTasks() {
-      data.autoTasks.forEach(t => {
-        data.tasks.push({ name: t.name, person: t.person, points: t.points, done: false });
-      });
+      data.autoTasks.forEach(t => data.tasks.push({ name: t.name, points: t.points, done: false }));
       saveData(data);
       renderTasks();
       toast("Tâches automatiques générées.");
@@ -1836,10 +1941,8 @@ function toggleTaskDone(index) {
     // ---------- Sélecteurs de membres ----------
     function populateMemberSelects() {
       const selects = [
-        document.getElementById("taskPersonInput"),
         document.getElementById("penaltyPersonInput"),
-        document.getElementById("goalPersonInput"),
-        document.getElementById("settingsAutoTaskPersonInput")
+        document.getElementById("goalPersonInput")
       ];
       selects.forEach(sel => {
         sel.innerHTML = "";
@@ -1939,7 +2042,17 @@ function toggleTaskDone(index) {
         new MutationObserver(fill).observe(t.tBodies[0], { childList: true });
       });
 
+      document.getElementById("settingsAutoFreq").addEventListener("change", e => {
+        document.getElementById("settingsAutoDay").style.display = e.target.value === "weekly" ? "" : "none";
+      });
+
+      checkMonth();
+      runRecurring();
       renderAll();
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState !== "visible") return;
+        checkMonth(); runRecurring(); renderAll(); maybeShowCongrats();
+      });
     }
 
     // Expose quelques fonctions au scope global pour les boutons inline
@@ -1969,6 +2082,7 @@ function showRewardAnimation(text) {
 }
 document.getElementById("fq-enter-btn").addEventListener("click", () => {
   document.getElementById("fq-welcome").style.display = "none";
+  maybeShowCongrats();
 });
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("service-worker.js")
