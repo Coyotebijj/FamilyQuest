@@ -774,6 +774,12 @@ header .fq-name { font-size: 1.4rem; }
 .hero-box { background: #1a1a24; border: 1px solid var(--border); border-radius: 12px; padding: 0.7rem 0.9rem;
   margin-bottom: 0.8rem; display: flex; flex-direction: column; gap: 0.2rem; }
 .hero-box small { color: var(--muted); margin-top: 0.3rem; }
+.tabbar { overflow-x: auto; }
+.tabbar button { min-width: 64px; }
+.lvl-row { flex-wrap: nowrap; gap: 0.4rem; }
+.lvl-row input[type="number"] { flex: 0 0 90px; width: 90px; }
+.lvl-row input[type="text"] { flex: 1 1 auto; min-width: 0; }
+.lvl-row .btn { flex: 0 0 44px; padding: 0; }
 @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
 
 @media (max-width: 768px) {
@@ -900,9 +906,6 @@ header .fq-name { font-size: 1.4rem; }
       <button class="btn btn-secondary" id="openSettingsBtn" aria-label="Paramètres">
         <span class="icon">⚙️</span><span class="lbl">Paramètres</span>
       </button>
-      <button class="btn btn-primary" id="saveAllBtn" aria-label="Sauvegarder">
-        <span class="icon">💾</span><span class="lbl">Sauvegarder tout</span>
-      </button>
     </div>
   </header>
   
@@ -910,7 +913,7 @@ header .fq-name { font-size: 1.4rem; }
   <main>
     <div class="grid">
       <!-- Famille & points -->
-      <section class="card">
+      <section class="card" data-tab="family">
         <div class="card-header">
           <h2>Famille & points</h2>
           <span>Niveaux, badges & rôles</span>
@@ -931,7 +934,7 @@ header .fq-name { font-size: 1.4rem; }
       </section>
 
       <!-- Gestion des tâches -->
-      <section class="card">
+      <section class="card" data-tab="tasks">
         <div class="card-header">
           <h2>Gestion des tâches</h2>
           <span>Tâches quotidiennes & hebdomadaires</span>
@@ -955,7 +958,7 @@ header .fq-name { font-size: 1.4rem; }
           </tbody>
         </table>
       </section>
-<section class="card">
+<section class="card" data-tab="tasks">
   <div class="card-header">
     <h2>Historique des tâches</h2>
     <span>Tâches terminées récemment</span>
@@ -974,7 +977,7 @@ header .fq-name { font-size: 1.4rem; }
 </section>
 
       <!-- Récompenses & sanctions -->
-      <section class="card">
+      <section class="card" data-tab="shop">
         <div class="card-header">
           <h2>Récompenses & sanctions</h2>
           <span>Motivation & cadre</span>
@@ -1023,7 +1026,7 @@ header .fq-name { font-size: 1.4rem; }
       </section>
 
       <!-- Objectifs de la semaine -->
-      <section class="card">
+      <section class="card" data-tab="goals">
         <div class="card-header">
           <h2>Objectifs de la semaine</h2>
           <span>Focus & progression</span>
@@ -1047,7 +1050,7 @@ header .fq-name { font-size: 1.4rem; }
       </section>
 
       <!-- Calendrier mensuel -->
-      <section class="card">
+      <section class="card" data-tab="goals">
         <div class="card-header">
           <h2>Calendrier mensuel</h2>
           <span id="calMonth"></span>
@@ -1058,7 +1061,7 @@ header .fq-name { font-size: 1.4rem; }
       </section>
 
       <!-- Statistiques mensuelles -->
-      <section class="card">
+      <section class="card" data-tab="family">
         <div class="card-header">
           <h2>Statistiques mensuelles</h2>
           <span>Tâches, points, sanctions, récompenses</span>
@@ -1159,13 +1162,13 @@ header .fq-name { font-size: 1.4rem; }
         <!-- Niveaux & badges -->
         <div class="settings-section" id="levelsSection">
           <h3>Niveaux, XP & badges</h3>
-          <p>Le système est gamifié : les points donnent de l’XP, des niveaux, des badges et des titres.</p>
-          <p style="font-size:0.75rem;color:var(--muted);">
-            (Pour simplifier, les règles sont codées en dur dans le JS : ex. 0–9 pts = Niveau 1, 10–24 = Niveau 2, etc.)
-          </p>
-          <div class="settings-list" id="settingsLevelsInfo">
-            <!-- Rempli par JS (description des paliers) -->
-          </div>
+          <p>Chaque point gagné est de l'XP. Modifie ici les paliers de points, les titres de niveau et les badges : les changements s'appliquent tout de suite.</p>
+          <h3 style="margin-top:1rem;font-size:0.9rem;">Niveaux (points minimum · titre)</h3>
+          <div class="settings-list" id="settingsLevelsInfo"></div>
+          <div class="settings-inline-inputs"><button class="btn btn-secondary" id="addLevelBtn">+ Ajouter un niveau</button></div>
+          <h3 style="margin-top:1.2rem;font-size:0.9rem;">Badges (points minimum · nom)</h3>
+          <div class="settings-list" id="settingsBadgesInfo"></div>
+          <div class="settings-inline-inputs"><button class="btn btn-secondary" id="addBadgeBtn">+ Ajouter un badge</button></div>
         </div>
 
         <!-- Réinitialisation -->
@@ -1199,12 +1202,7 @@ header .fq-name { font-size: 1.4rem; }
     </div>
   </div>
 
-  <nav class="tabbar" id="tabbar" aria-label="Navigation">
-    <button data-tab="family" class="active"><span>🏠</span>Famille</button>
-    <button data-tab="tasks"><span>✅</span>Tâches</button>
-    <button data-tab="shop"><span>🎁</span>Boutique</button>
-    <button data-tab="goals"><span>🎯</span>Objectifs</button>
-  </nav>
+  <nav class="tabbar" id="tabbar" aria-label="Navigation"></nav>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <!-- ---------- LOGIQUE JS ---------- -->
@@ -1246,6 +1244,20 @@ function pickMember(title, cb) {
   document.body.appendChild(o);
 }
 
+// ===== Barre de navigation du bas =====
+// Pour ajouter un menu : 1) ajoute une ligne dans TABS,
+// 2) mets data-tab="son-id" sur la ou les <section class="card"> à afficher dans ce menu.
+const TABS = [
+  { id: "family", icon: "🏠", label: "Famille" },
+  { id: "tasks", icon: "✅", label: "Tâches" },
+  { id: "shop", icon: "🎁", label: "Boutique" },
+  { id: "goals", icon: "🎯", label: "Objectifs" }
+];
+function buildTabbar() {
+  document.getElementById("tabbar").innerHTML =
+    TABS.map(t => `<button data-tab="${t.id}"><span>${t.icon}</span>${t.label}</button>`).join("");
+}
+
 function setTab(t) {
   document.querySelectorAll("main .card").forEach(c => c.classList.toggle("tab-active", c.dataset.tab === t));
   document.querySelectorAll("#tabbar button").forEach(b => b.classList.toggle("active", b.dataset.tab === t));
@@ -1257,11 +1269,11 @@ function setTab(t) {
     const monthLabel = k => new Date(+k.slice(0, 4), +k.slice(5, 7) - 1, 1).toLocaleDateString("fr-FR", { month: "long", year: "numeric" });
 
     function levelCell(pts, lvl) {
-      const T = [0, 10, 25, 40, 60], i = lvl.level - 1, next = T[i + 1];
+      const T = data.levels.map(l => l.min).sort((a, b) => a - b), i = lvl.level - 1, next = T[i + 1];
       const pct = next === undefined ? 100 : Math.round((pts - T[i]) / (next - T[i]) * 100);
       const reste = next === undefined ? 0 : next - pts;
       const txt = next === undefined ? "Niveau max 🏆" : `encore ${reste} pt${reste > 1 ? "s" : ""} pour le niveau ${lvl.level + 1}`;
-      return `<div class="lvl"><span class="badge badge-level">Niveau ${lvl.level}</span><div class="xp"><i style="width:${pct}%"></i></div><small>${txt}</small></div>`;
+      return `<div class="lvl"><span class="badge badge-level">Niveau ${lvl.level} · ${esc(lvl.title)}</span><div class="xp"><i style="width:${pct}%"></i></div><small>${txt}</small></div>`;
     }
 
     function checkMonth() {
@@ -1313,6 +1325,19 @@ function setTab(t) {
       history: [],
       heroes: [],
       month: mkey(new Date()),
+      levels: [
+        { min: 0, title: "Débutant" },
+        { min: 10, title: "Apprenti du foyer" },
+        { min: 25, title: "Super aide" },
+        { min: 40, title: "Pilier du foyer" },
+        { min: 60, title: "Héros du foyer" }
+      ],
+      badges: [
+        { min: 10, name: "Assidu" },
+        { min: 25, name: "Fiable" },
+        { min: 40, name: "Exemplaire" },
+        { min: 60, name: "Héros" }
+      ],
     };
 function showMainApp() {}
     function loadData() {
@@ -1335,11 +1360,10 @@ data.stats = Object.assign({ tasksDone: {}, penalties: {}, rewardsBought: {} }, 
 
     // ---------- Utilitaires ----------
     function getLevel(points) {
-      if (points >= 60) return { level: 5, title: "Héros du foyer" };
-      if (points >= 40) return { level: 4, title: "Pilier du foyer" };
-      if (points >= 25) return { level: 3, title: "Super aide" };
-      if (points >= 10) return { level: 2, title: "Apprenti du foyer" };
-      return { level: 1, title: "Débutant" };
+      const L = [...data.levels].sort((a, b) => a.min - b.min);
+      let i = 0;
+      L.forEach((l, k) => { if (points >= l.min) i = k; });
+      return { level: i + 1, title: L[i].title };
     }
 
     function updateStatsForTask(person, done) {
@@ -1365,11 +1389,7 @@ data.stats = Object.assign({ tasksDone: {}, penalties: {}, rewardsBought: {} }, 
       data.members.forEach(m => {
         const pts = data.points[m.name] || 0;
         const lvl = getLevel(pts);
-        const badges = [];
-        if (pts >= 10) badges.push("Assidu");
-        if (pts >= 25) badges.push("Fiable");
-        if (pts >= 40) badges.push("Exemplaire");
-        if (pts >= 60) badges.push("Héros");
+        const badges = data.badges.filter(b => pts >= b.min).map(b => b.name);
 
         const avatarClass = m.role === "parent" ? "avatar-parent" : "avatar-child";
 
@@ -1382,7 +1402,7 @@ data.stats = Object.assign({ tasksDone: {}, penalties: {}, rewardsBought: {} }, 
           </td>
           <td>${pts}</td>
           <td>${levelCell(pts, lvl)}</td>
-          <td>${badges.map(b => `<span class="badge">${b}</span>`).join(" ")}</td>
+          <td>${badges.map(b => `<span class="badge">${esc(b)}</span>`).join(" ")}</td>
         `;
         tbody.appendChild(tr);
       });
@@ -1890,24 +1910,53 @@ function undoTask(t, person, iso, i) {
 
     // ---------- Paramètres : Niveaux ----------
     function renderSettingsLevelsInfo() {
-      const container = document.getElementById("settingsLevelsInfo");
-      container.innerHTML = "";
-      const levels = [
-        { range: "0–9 pts", label: "Niveau 1 · Débutant" },
-        { range: "10–24 pts", label: "Niveau 2 · Apprenti du foyer" },
-        { range: "25–39 pts", label: "Niveau 3 · Super aide" },
-        { range: "40–59 pts", label: "Niveau 4 · Pilier du foyer" },
-        { range: "60+ pts", label: "Niveau 5 · Héros du foyer" }
-      ];
-      levels.forEach(l => {
-        const item = document.createElement("div");
-        item.className = "settings-item";
-        item.innerHTML = `
-          <div>${l.range}</div>
-          <div class="settings-item-meta">${l.label}</div>
-        `;
-        container.appendChild(item);
-      });
+      const row = (kind, i, min, label, locked) => `
+        <div class="settings-item lvl-row">
+          <input type="number" min="0" step="0.5" value="${min}" ${locked ? "disabled" : ""} data-kind="${kind}" data-i="${i}" data-f="min" aria-label="Points minimum">
+          <input type="text" value="${esc(label)}" data-kind="${kind}" data-i="${i}" data-f="label" aria-label="Nom">
+          ${locked ? "" : `<button class="btn btn-danger" data-del="${kind}" data-i="${i}" aria-label="Supprimer">🗑</button>`}
+        </div>`;
+      document.getElementById("settingsLevelsInfo").innerHTML = data.levels.map((l, i) => row("levels", i, l.min, l.title, i === 0)).join("");
+      document.getElementById("settingsBadgesInfo").innerHTML = data.badges.map((b, i) => row("badges", i, b.min, b.name, false)).join("");
+    }
+
+    function levelsChanged(e) {
+      const el = e.target, k = el.dataset.kind;
+      if (!k) return;
+      const item = data[k][+el.dataset.i];
+      if (el.dataset.f === "min") {
+        let v = parseFloat(el.value);
+        if (isNaN(v) || v < 0) v = item.min;
+        item.min = k === "levels" ? Math.max(v, 0.5) : v;
+      } else if (k === "levels") {
+        item.title = el.value.trim() || item.title;
+      } else {
+        item.name = el.value.trim() || item.name;
+      }
+      data.levels.sort((a, b) => a.min - b.min);
+      data.badges.sort((a, b) => a.min - b.min);
+      saveData(data);
+      renderSettingsLevelsInfo();
+      renderFamily();
+    }
+
+    function levelsClick(e) {
+      const b = e.target.closest("[data-del]");
+      if (!b) return;
+      data[b.dataset.del].splice(+b.dataset.i, 1);
+      saveData(data);
+      renderSettingsLevelsInfo();
+      renderFamily();
+    }
+
+    function addLevelOrBadge(kind) {
+      const max = Math.max(0, ...data[kind].map(x => x.min));
+      data[kind].push(kind === "levels"
+        ? { min: max + 15, title: "Niveau " + (data.levels.length + 1) }
+        : { min: max + 10, name: "Nouveau badge" });
+      saveData(data);
+      renderSettingsLevelsInfo();
+      renderFamily();
     }
 
     // ---------- Paramètres : Réinitialisation ----------
@@ -1915,9 +1964,12 @@ function undoTask(t, person, iso, i) {
       if (!confirm("Réinitialiser toutes les données (sauf les membres) ?")) return;
       const membersCopy = structuredClone(data.members);
       const pointsCopy = structuredClone(data.points);
+      const levelsCopy = structuredClone(data.levels), badgesCopy = structuredClone(data.badges);
       data = structuredClone(defaultData);
       data.members = membersCopy;
       data.points = pointsCopy;
+      data.levels = levelsCopy;
+      data.badges = badgesCopy;
       saveData(data);
       renderAll();
       toast("Données réinitialisées (sauf membres).");
@@ -1947,6 +1999,7 @@ function undoTask(t, person, iso, i) {
         data.stats = Object.assign({ tasksDone: {}, penalties: {}, rewardsBought: {} }, data.stats);
         saveData(data);
         renderAll();
+        document.getElementById("importJsonTextarea").value = "";
         toast("Données importées avec succès.");
       } catch {
         toast("JSON invalide.");
@@ -1998,12 +2051,6 @@ function undoTask(t, person, iso, i) {
       });
     }
 
-    // ---------- Sauvegarde globale ----------
-    function saveAll() {
-      saveData(data);
-      toast("Toutes les données ont été sauvegardées.");
-    }
-
     // ---------- Rendu global ----------
     function renderAll() {
       renderFamily();
@@ -2039,16 +2086,19 @@ function undoTask(t, person, iso, i) {
       document.getElementById("exportJsonBtn").addEventListener("click", exportJson);
       document.getElementById("importJsonBtn").addEventListener("click", importJson);
 
-      document.getElementById("saveAllBtn").addEventListener("click", saveAll);
+      const lvlSection = document.getElementById("levelsSection");
+      lvlSection.addEventListener("change", levelsChanged);
+      lvlSection.addEventListener("click", levelsClick);
+      document.getElementById("addLevelBtn").addEventListener("click", () => addLevelOrBadge("levels"));
+      document.getElementById("addBadgeBtn").addEventListener("click", () => addLevelOrBadge("badges"));
 
-      // Onglets mobiles : chaque carte est rattachée à un onglet
-      const tabs = ["family", "tasks", "tasks", "shop", "goals", "goals", "family"];
-      document.querySelectorAll("main .card").forEach((c, i) => c.dataset.tab = tabs[i]);
+      // Barre de navigation du bas (générée depuis TABS)
+      buildTabbar();
       document.getElementById("tabbar").addEventListener("click", e => {
         const b = e.target.closest("button");
         if (b) setTab(b.dataset.tab);
       });
-      setTab("family");
+      setTab(TABS[0].id);
 
       // Étiquettes des colonnes pour l'affichage en cartes sur mobile
       document.querySelectorAll("table").forEach(t => {
