@@ -1970,8 +1970,6 @@ function showRewardAnimation(text) {
 document.getElementById("fq-enter-btn").addEventListener("click", () => {
   document.getElementById("fq-welcome").style.display = "none";
 });
-// Écran d'accueil : affiché seulement à la première utilisation
-if (data.members && data.members.length) document.getElementById("fq-welcome").style.display = "none";
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("service-worker.js")
     .then(() => console.log("Service worker enregistré"))
