@@ -1,9 +1,9 @@
 // Incrémente cette version à chaque mise à jour de l'application
-const CACHE = "familiquest-v2";
+const CACHE = "familiquest-v3";
 const FICHIERS = ["./", "./index.html", "./manifest.json", "./icon-192.png", "./icon-512.png"];
 
 self.addEventListener("install", (event) => {
-  event.waitUntil(caches.open(CACHE).then((c) => c.addAll(FICHIERS)));
+  event.waitUntil(caches.open(CACHE).then((c) => Promise.all(FICHIERS.map((f) => fetch(f, { cache: "reload" }).then((r) => c.put(f, r))))));
   self.skipWaiting();
 });
 
@@ -21,7 +21,7 @@ self.addEventListener("fetch", (event) => {
 
   // Réseau d'abord (toujours la dernière version), cache en secours hors ligne
   event.respondWith(
-    fetch(req)
+    fetch(req, { cache: "no-cache" })
       .then((rep) => {
         const copie = rep.clone();
         caches.open(CACHE).then((c) => c.put(req, copie));

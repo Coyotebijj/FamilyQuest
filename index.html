@@ -802,14 +802,28 @@ header .fq-name { font-size: 1.4rem; }
   td[data-label^="Action"] { flex-wrap: wrap; padding-top: 0.5rem; }
   td[data-label^="Action"] .btn { flex: 1 1 auto; }
   /* paramètres plein écran */
-  .settings-panel { flex-direction: column; }
-  .settings-sidebar { width: 100%; flex-direction: column; border-right: 0; border-bottom: 1px solid var(--border);
-    padding: 0.6rem; padding-top: max(0.6rem, env(safe-area-inset-top)); gap: 0.4rem; }
+  .settings-overlay { height: 100dvh; overflow: hidden; }
+  .settings-overlay *, .settings-overlay *::before, .settings-overlay *::after { box-sizing: border-box; }
+  .settings-panel { flex-direction: column; width: 100%; max-width: 100%; min-width: 0; height: 100%; }
+  .settings-sidebar { width: 100%; max-width: 100%; flex: 0 0 auto; flex-direction: column; border-right: 0;
+    border-bottom: 1px solid var(--border); padding: 0.6rem; padding-top: max(0.6rem, env(safe-area-inset-top)); gap: 0.5rem; }
   .settings-sidebar-header span, .settings-sidebar-footer span { display: none; }
-  .settings-sidebar-footer { margin-top: 0; }
-  .settings-nav { flex-direction: row; flex-wrap: nowrap; overflow-x: auto; margin-top: 0; }
-  .settings-nav-btn { white-space: nowrap; min-height: 40px; }
-  .settings-content { padding: 1rem 0.9rem calc(1rem + env(safe-area-inset-bottom)); }
+  .settings-sidebar-header h2 { margin: 0; font-size: 1.1rem; }
+  .settings-sidebar-footer { order: -1; margin-top: 0; }
+  .settings-sidebar-footer .btn { margin-bottom: 0 !important; }
+  .settings-nav { display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; margin-top: 0; }
+  .settings-nav-btn { white-space: normal; min-height: 44px; justify-content: center; text-align: center;
+    background: #151522; font-size: 0.85rem; padding: 0.4rem 0.5rem; }
+  .settings-nav-btn.active { transform: none; }
+  .settings-nav-btn:last-child:nth-child(odd) { grid-column: 1 / -1; }
+  .settings-content { flex: 1 1 0; min-height: 0; min-width: 0; max-width: 100%; overflow-x: hidden;
+    padding: 1rem 0.9rem calc(1rem + env(safe-area-inset-bottom)); }
+  .settings-item-main { min-width: 0; flex: 1 1 100%; overflow-wrap: anywhere; }
+  .settings-actions { flex-wrap: wrap; width: 100%; }
+  .settings-actions .btn { flex: 1 1 auto; }
+  .settings-inline-inputs { min-width: 0; }
+  .settings-inline-inputs .btn { width: 100%; }
+  .settings-overlay input, .settings-overlay select, .settings-overlay textarea { min-width: 0; width: 100%; max-width: 100%; }
   .reward-animation { max-width: 90vw; font-size: 1.4rem; padding: 20px 24px; }
 }
 </style>
@@ -1195,6 +1209,7 @@ header .fq-name { font-size: 1.4rem; }
 
   <!-- ---------- LOGIQUE JS ---------- -->
   <script>
+if (!window.structuredClone) window.structuredClone = o => JSON.parse(JSON.stringify(o));
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
 let toastTimer;
@@ -2085,8 +2100,10 @@ document.getElementById("fq-enter-btn").addEventListener("click", () => {
   maybeShowCongrats();
 });
 if ("serviceWorker" in navigator) {
+  const dejaControle = !!navigator.serviceWorker.controller;
+  navigator.serviceWorker.addEventListener("controllerchange", () => { if (dejaControle) location.reload(); });
   navigator.serviceWorker.register("service-worker.js")
-    .then(() => console.log("Service worker enregistré"))
+    .then(reg => { reg.update(); console.log("Service worker enregistré"); })
     .catch((err) => console.error("Erreur SW:", err));
 }
 
